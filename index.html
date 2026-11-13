@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bandplan HF – studio con 20 codici</title>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1d2433;--mute:#5b6475;--line:#d9dee8;--bg:#f6f7fb;--card:#fff;--acc:#1557d6;
+--cw:#e53935;--f27:#4c9a1a;--f60:#2e6b12;--d5:#6c9bea;--d27:#1557d6;--d60:#a315b5;--img:#222;--sat:#eaa5c8;--bcn:#ff9f1c;--con:#ffe14d}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,sans-serif;color:var(--ink);background:var(--bg);line-height:1.5}
+header{background:linear-gradient(135deg,#0d2b6b,#1557d6);color:#fff;padding:28px 20px 22px}
+header h1{margin:0 0 4px;font-size:28px}
+header p{margin:2px 0;opacity:.9}
+.wrap{max-width:1040px;margin:0 auto;padding:0 16px}
+nav{position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid var(--line);overflow-x:auto;white-space:nowrap}
+nav a{display:inline-block;padding:9px 10px;font-size:13px;color:var(--acc);text-decoration:none;font-weight:600}
+nav a:hover{background:#eef3ff}
+section{background:var(--card);border:1px solid var(--line);border-radius:14px;margin:18px 0;padding:18px 20px;page-break-inside:avoid}
+section h2{margin:0 0 4px;font-size:21px}
+.code{font-family:ui-monospace,Consolas,monospace;background:#0d2b6b;color:#fff;border-radius:6px;padding:2px 8px;font-size:14px;margin-right:6px}
+.sub{color:var(--mute);margin:0 0 12px;font-size:14px}
+ol.c{counter-reset:a;list-style:none;padding-left:0}
+ol.c>li{counter-increment:a;margin:4px 0;padding-left:34px;position:relative}
+ol.c>li::before{content:counter(a)".";position:absolute;left:0;font-weight:700;color:var(--acc)}
+ol.c ol{counter-reset:b;list-style:none;padding-left:0;margin:4px 0}
+ol.c ol>li{counter-increment:b;padding-left:44px;position:relative;margin:2px 0}
+ol.c ol>li::before{content:counter(a)"."counter(b);position:absolute;left:0;font-weight:600;color:var(--mute)}
+table{border-collapse:collapse;width:100%;font-size:14px;margin:8px 0}
+th,td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+th{background:#eef3ff}
+.legend{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.legend span{font-size:12px;font-weight:600;padding:3px 8px;border-radius:5px;color:#fff}
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.g5{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+.box{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:#fbfcff}
+.big{font-size:34px;font-weight:800;color:var(--acc);line-height:1.1}
+.tag{display:inline-block;font-size:11px;font-weight:700;padding:1px 7px;border-radius:10px;margin-right:4px}
+.p{background:#dff3d4;color:#225c0b}.s{background:#ffe1df;color:#a3201a}.w{background:#fff3c4;color:#7a5a00}
+.band{margin:14px 0 18px}
+.band h4{margin:0 0 2px;font-size:16px}
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px}
+.chips span{font-size:12px;background:#eef1f7;border-radius:6px;padding:2px 7px}
+.chips b{color:#c62828}
+.hand{font-family:Caveat,cursive}
+.note{font-size:13px;color:var(--mute)}
+.warn{background:#fff8e1;border-left:4px solid #f2b705;padding:8px 12px;border-radius:6px;font-size:14px}
+svg{max-width:100%;height:auto;display:block}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
+.card{perspective:800px;height:140px;cursor:pointer}
+.card .in{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d}
+.card.f .in{transform:rotateY(180deg)}
+.card .fa,.card .ba{position:absolute;inset:0;backface-visibility:hidden;border-radius:12px;padding:12px;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:600;font-size:14px}
+.card .fa{background:#0d2b6b;color:#fff}
+.card .ba{background:#e9f7e1;color:#1d3d0c;transform:rotateY(180deg);border:2px solid #4c9a1a}
+.btn{background:var(--acc);color:#fff;border:0;border-radius:8px;padding:7px 14px;font-weight:600;cursor:pointer;margin:0 6px 8px 0}
+details{margin:6px 0}summary{cursor:pointer;font-weight:600;color:var(--acc)}
+footer{text-align:center;color:var(--mute);font-size:13px;padding:20px}
+.sign{font-family:Caveat,cursive;font-size:22px;color:#0d2b6b}
+@media print{
+ nav,.btn,.noprint{display:none!important}
+ body{background:#fff}
+ section{border:1px solid #ccc;break-inside:auto;page-break-inside:auto}
+ .band,.box,svg,tr{break-inside:avoid}
+ .card{height:auto;perspective:none;break-inside:avoid}
+ .card .in{transform:none!important}
+ .card .fa,.card .ba{position:static;backface-visibility:visible;transform:none;margin-bottom:4px;min-height:44px}
+ details{display:block}details>*{display:block}
+ header{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+<div style="background:#0d2b6b;padding:8px 16px;font-family:Inter,Arial,sans-serif;font-size:14px"><a href="index.html" style="color:#fff;margin-right:16px;font-weight:700;text-decoration:none">Bandplan HF – 20 codici</a><a href="audio.html" style="color:#ffd27a;margin-right:16px;font-weight:700;text-decoration:none">Ascolta la dispensa v7</a><a href="download.html" style="color:#bfe3ff;font-weight:700;text-decoration:none">Scarica PDF e DOCX</a></div>
+<header><div class="wrap">
+<h1>Bandplan HF – capirlo e memorizzarlo</h1>
+<p>Studio del Bandplan HF A.R.I. Sezione di Milano (rev. 2021) con 20 codici di spiegazione visiva e di studio — v4: definizioni delle slide 70–90 ed emergenza 40 m su 7110 kHz LSB</p>
+<p class="sign">By Chitano Antonio</p>
+</div></header>
+<nav id="nav"></nav>
+<main class="wrap" id="main"></main>
+<footer>Fonte: Bandplan HF A.R.I. Sezione di Milano 20.01, © IZ2GIL, rev. 2021 IU2CIQ — basato su PNRF 2018 (G.U. n. 244 del 19-10-2018, suppl. 49) e Raccomandazione IARU Regione 1, Vienna 2016. Tutte le frequenze sono in kHz.<br><span class="sign">By Chitano Antonio</span></footer>
+
+<script>
+const COL={cw:'#e53935',f27:'#4c9a1a',f60:'#2e6b12',d5:'#6c9bea',d27:'#1557d6',d60:'#a315b5',img:'#222222',sat:'#eaa5c8',bcn:'#ff9f1c',con:'#ffe14d',nc:'#ffffff'};
+const LEG=[['cw','CW 200 Hz'],['f27','Fonia 2700 Hz'],['f60','Fonia 6000 Hz'],['d5','Digitale 500 Hz'],['d27','Digitale 2700 Hz'],['d60','Digitale 6000 Hz'],['img','Immagini 2700 Hz'],['sat','Satellite 6000 Hz'],['bcn','Beacon 200 Hz'],['con','Contest preferito'],['nc','No contest']];
+const ROW={con:0,nc:1,d5:1,d27:1,d60:1,img:1,sat:2,bcn:1,f27:2,f60:2,cw:3};
+// segs: [tipo, da, a, etichetta]
+const B=[
+{m:'160 m',a:1830,b:1850,st:'primario',warc:false,nc:false,star:null,note:'NO PACKET RADIO',
+ s:[['d5',1838,1840],['d27',1840,1843],['f27',1840,1850],['cw',1830,1850]],
+ f:[['QRP CW',1836],['RTTY',1838],['FT8',1840]]},
+{m:'80 m',a:3500,b:3800,st:'secondario',star:3760,
+ s:[['con',3510,3560,'CW'],['con',3600,3650,'SSB'],['con',3700,3775,'SSB'],['d5',3580,3600],['d27',3600,3620],['img',3730,3740],['f27',3600,3800],['cw',3500,3800]],
+ f:[['CW DX intercontinentale','3500–3510'],['FT8','3537*'],['CW QRS',3555],['QRP CW',3560],['FT4',3568],['PSK31',3580],['RTTY','3584 e 3610'],['DV',3630],['QRP fonia',3690],['FAX/SSTV',3735],['Emergenza',3760],['Fonia DX intercontinentale','3775–3800']]},
+{m:'60 m',a:5351.5,b:5366.5,st:'secondario',nc:true,star:null,note:'max 15 W e.i.r.p. – WRC-15 – NO CONTEST',
+ s:[['d5',5351.5,5366.5],['f27',5354,5366],['cw',5351.5,5366.5]],
+ f:[['FT4/FT8',5357],['Canali USB','5354 · 5357 · 5360 · 5363']]},
+{m:'40 m',a:7000,b:7200,st:'primario',star:7110,note:'emergenza: 7110 kHz LSB, centro di attività IARU (il documento ARI Milano indica 7170) – Rete Zamberletti: 6990 kHz LSB, fuori banda',
+ s:[['con',7060,7100,'SSB'],['con',7130,7200,'SSB'],['nc',7035,7040],['d5',7040,7050],['d27',7050,7060],['f27',7050,7200],['cw',7000,7200]],
+ f:[['QRP CW',7030],['PSK31',7036],['RTTY',7040],['DV',7070],['FT4/FT8',7074],['QRP fonia',7090],['FAX/SSTV',7165],['Emergenza (IARU)','7110 LSB'],['Rete Zamberletti','6990 LSB (fuori banda)']]},
+{m:'30 m',a:10100,b:10150,st:'secondario',warc:true,nc:true,star:null,note:'banda WARC – NO CONTEST – niente fonia',
+ s:[['d5',10130,10150],['cw',10100,10150]],
+ f:[['QRP CW',10116],['FT8',10136],['FT4',10140],['PSK31',10140],['RTTY',10145]]},
+{m:'20 m',a:14000,b:14350,st:'primario',star:14300,
+ s:[['con',14000,14060,'CW'],['con',14125,14300,'SSB'],['d5',14070,14099],['bcn',14099,14101],['d27',14101,14112],['img',14225,14235],['f27',14101,14350],['cw',14000,14099],['cw',14101,14350]],
+ f:[['QRP CW',14060],['PSK31',14070],['FT8',14074],['FT4',14080],['RTTY',14090],['Beacon','14100 ±1'],['PSK31',14130],['Centro attività DX','14195 ±5'],['FAX/SSTV','14230 ±5'],['QRP fonia',14285],['Emergenza',14300]]},
+{m:'17 m',a:18068,b:18168,st:'primario',warc:true,nc:true,star:18160,note:'banda WARC – NO CONTEST (il documento ARI scrive 18069: la tabella PNRF conferma 18068)',
+ s:[['d5',18095,18109],['bcn',18109,18111],['d27',18111,18120],['f27',18111,18168],['cw',18068,18109],['cw',18111,18168]],
+ f:[['QRP CW',18086],['FT8/PSK31',18100],['FT4',18104],['RTTY',18105],['Beacon','18110 ±1'],['DV',18130],['Emergenza',18160]]},
+{m:'15 m',a:21000,b:21450,st:'primario',star:21360,
+ s:[['d5',21070,21110],['d27',21110,21120],['bcn',21149,21151],['img',21335,21345],['f27',21151,21450],['cw',21000,21149],['cw',21151,21450]],
+ f:[['CW QRS',21055],['QRP CW',21060],['PSK31',21070],['FT8',21074],['RTTY',21085],['FT4',21140],['Beacon','21150 ±1'],['DV',21180],['FAX/SSTV',21340],['Emergenza',21360],['QRP fonia',21385]]},
+{m:'12 m',a:24890,b:24990,st:'primario',warc:true,nc:true,star:null,note:'banda WARC – NO CONTEST',
+ s:[['d5',24915,24929],['bcn',24929,24931],['d27',24931,24940],['f27',24931,24990],['cw',24890,24929],['cw',24931,24990]],
+ f:[['QRP CW',24906],['FT8',24915],['FT4',24919],['PSK31',24920],['RTTY',24925],['Beacon','24930 ±1'],['DV',24960]]},
+{m:'10 m',a:28000,b:29700,st:'primario',star:null,
+ s:[['d5',28070,28190],['bcn',28190,28300],['d27',28300,28320],['img',28675,28685],['d60',29200,29300],['f27',28300,29100],['f60',29100,29300],['sat',29300,29510],['f60',29510,29700],['cw',28000,28190],['cw',28300,29300],['cw',29510,29700]],
+ f:[['CW QRS',28055],['QRP CW','28061 ±1'],['FT8',28074],['RTTY',28085],['FT4',28180],['Beacon','28190–28300'],['DV',28330],['FAX/SSTV',28680],['QRP fonia','28885 ±1'],['Ripetitori FM IN','29510–29590 (step 10)'],['Ripetitori FM OUT','29610–29690 (step 10)']]}
+];
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+function star(x,y,r,fill='#ffd400'){let p='';for(let i=0;i<10;i++){const a=Math.PI/2+i*Math.PI/5,rr=i%2?r*0.45:r;p+=(x+rr*Math.cos(a)).toFixed(1)+','+(y-rr*Math.sin(a)).toFixed(1)+' ';}return `<polygon points="${p}" fill="${fill}" stroke="#d32f2f" stroke-width="1.5"/>`;}
+function bandSVG(b){
+  const pts=[...new Set([b.a,b.b,...b.s.flatMap(x=>[x[1],x[2]]),...(b.star?[b.star]:[])])].sort((x,y)=>x-y);
+  const W=960,L=70,R=900; const step=(R-L)/(pts.length-1);
+  const X=v=>{for(let i=0;i<pts.length-1;i++){if(v>=pts[i]&&v<=pts[i+1])return L+step*(i+(v-pts[i])/(pts[i+1]-pts[i]||1));}return R;};
+  const ry=[34,62,90,118],h=20;
+  let g=`<svg viewBox="0 0 ${W} 170" xmlns="http://www.w3.org/2000/svg" font-family="Inter,Arial" >`;
+  ['Contest','Digitale','Fonia','CW'].forEach((t,i)=>g+=`<text x="4" y="${ry[i]+14}" font-size="11" fill="#5b6475">${t}</text>`);
+  b.s.forEach(([t,a,c,lab])=>{const r=ROW[t];const x=X(a),w=Math.max(X(c)-x,3);
+    g+=`<rect x="${x}" y="${ry[r]}" width="${w}" height="${h}" rx="3" fill="${COL[t]}" stroke="${t=='nc'||t=='con'?'#333':'none'}" stroke-width="${t=='nc'?1:0.5}"/>`;
+    if(lab&&w>30)g+=`<text x="${x+w/2}" y="${ry[r]+14}" font-size="11" font-weight="700" text-anchor="middle">${lab}</text>`;});
+  if(b.star){g+=star(X(b.star),ry[2]+10,11);}
+  pts.forEach((v,i)=>{const x=X(v);const edge=(v==b.a||v==b.b);
+    g+=`<line x1="${x}" y1="146" x2="${x}" y2="${edge?22:140}" stroke="${edge?'#333':'#c4cad6'}" stroke-dasharray="${edge?'':'2,3'}"/>`;
+    g+=`<text x="${x}" y="${i%2?166:158}" font-size="${edge?12:10.5}" font-weight="${edge?800:500}" text-anchor="middle" fill="${v==b.star?'#d32f2f':'#1d2433'}">${String(v).replace('.',',')}</text>`;});
+  g+=`<text x="${W-4}" y="14" font-size="10" fill="#8a93a5" text-anchor="end">schema non in scala</text></svg>`;
+  return g;
+}
+function legendHTML(){return '<div class="legend">'+LEG.map(([k,t])=>`<span style="background:${COL[k]};color:${['con','nc','sat'].includes(k)?'#222':'#fff'};${k=='nc'?'border:1px solid #333':''}">${t}</span>`).join('')+'</div>';}
+function bandBlock(b){const tags=`<span class="tag ${b.st=='primario'?'p':'s'}">statuto ${b.st}</span>${b.warc?'<span class="tag w">WARC</span>':''}${b.nc?'<span class="tag w">no contest</span>':''}`;
+ return `<div class="band"><h4>${b.m} · ${String(b.a).replace('.',',')}–${String(b.b).replace('.',',')} kHz ${tags}</h4>${b.note?`<div class="note">${b.note}</div>`:''}${bandSVG(b)}<div class="chips">${b.f.map(([n,v])=>`<span>${esc(n)} <b>${esc(v)}</b></span>`).join('')}</div></div>`;}
+
+// ---------- SEZIONI ----------
+const S=[];
+const add=(id,code,title,sub,html)=>S.push({id,code,title,sub,html});
+
+// 1 INFOGRAPHIC
+add('infographic','/infographic','Infografica: il bandplan in un colpo d\'occhio','I numeri chiave da ricordare prima di tutto il resto.',`
+<div class="grid g3">
+<div class="box"><div class="big">10</div>bande HF nel documento: 160, 80, 60, 40, 30, 20, 17, 15, 12, 10 m</div>
+<div class="box"><div class="big">1,8 → 29,7</div>MHz: dalla prima banda (1830 kHz) all'ultima (29700 kHz)</div>
+<div class="box"><div class="big">≤ 5 W</div>QRP = collegamento con potenza in uscita fino a 5 W</div>
+<div class="box"><div class="big">LSB | USB</div>sotto 10 MHz si usa LSB, sopra USB. Eccezioni: 60 m sempre USB; FT8 e FT4 sempre USB</div>
+<div class="box"><div class="big">5 ★</div>frequenze di emergenza: 3760 · 7110 · 14300 · 18160 · 21360 kHz (in 40 m vale 7110 LSB)</div>
+<div class="box"><div class="big">4</div>bande NO CONTEST: 60 m e le 3 WARC (30, 17, 12 m)</div>
+<div class="box"><div class="big">3</div>bande a statuto secondario: 80, 60 e 30 m (le altre sono primarie)</div>
+<div class="box"><div class="big">kHz</div>tutte le frequenze del bandplan sono in kHz: 14074 = 14,074 MHz</div>
+</div>
+<h3>I colori della legenda</h3>${legendHTML()}
+<p class="note">Il numero dopo il modo (200, 500, 2700, 6000 Hz) è la larghezza di banda massima del segnale ammessa in quel segmento.</p>`);
+
+// 2 CANVAS
+add('canvas','/canvas','Tela: tutte le bande su un unico foglio','Ogni riquadro riassume una banda: limiti, statuto, regole speciali, frequenze da ricordare.',`
+<div class="grid g5">${B.map(b=>`<div class="box" style="border-top:5px solid ${b.st=='primario'?'#4c9a1a':'#e53935'}"><b style="font-size:18px">${b.m}</b><br><span class="note">${String(b.a).replace('.',',')}–${String(b.b).replace('.',',')} kHz</span><br>
+<span class="tag ${b.st=='primario'?'p':'s'}">${b.st}</span>${b.warc?'<span class="tag w">WARC</span>':''}${b.nc?'<span class="tag w">no contest</span>':''}
+<div style="font-size:13px;margin-top:6px">${b.f.filter(x=>/FT8|Emergenza|QRP fonia|Canali/.test(x[0])).map(x=>`${x[0]}: <b>${x[1]}</b>`).join('<br>')||'–'}${b.note?`<br><i>${b.note}</i>`:''}</div></div>`).join('')}</div>`);
+
+// 3 LAYERS
+add('layers','/layers','Livelli: da dove nascono le regole','Dal basso (la legge) all\'alto (tu davanti alla radio). Ogni livello si appoggia su quello sotto.',`
+<svg viewBox="0 0 800 330" font-family="Inter,Arial">
+${[['#0d2b6b','1. Legge italiana – PNRF 2018','G.U. n. 244 del 19-10-2018, suppl. 49: quali bande puoi usare e con quale statuto (primario/secondario)'],
+['#1557d6','2. Raccomandazione IARU Regione 1','Conferenza di Vienna 2016: come dividere ogni banda tra CW, digitale e fonia'],
+['#4c9a1a','3. Bandplan ARI Milano (rev. 2021)','Il disegno pratico: segmenti colorati, frequenze di riferimento, emergenze'],
+['#ff9f1c','4. Tu, l\'operatore','Scegli banda, modo e frequenza; rispetti QRP, LSB/USB, contest ed emergenze']].map((l,i)=>{const y=250-i*75,w=760-i*90,x=(800-w)/2;return `<rect x="${x}" y="${y}" width="${w}" height="66" rx="10" fill="${l[0]}"/><text x="400" y="${y+28}" text-anchor="middle" fill="#fff" font-size="17" font-weight="800">${l[1]}</text><text x="400" y="${y+50}" text-anchor="middle" fill="#fff" font-size="12">${l[2]}</text>`}).join('')}
+</svg>
+<p class="note">Anche ogni banda è fatta a strati, come nel disegno del bandplan: in basso la riga rossa del CW, sopra la fonia (verde), poi i digitali (azzurro/blu) e in cima le preferenze per i contest (giallo).</p>`);
+
+// 4 ROADMAP
+const RM=[['Tappa 1','La legenda dei colori','Riconosci al volo rosso = CW, verde = fonia, blu = digitale, nero = immagini, arancio = beacon'],
+['Tappa 2','Le 4 regole generali','LSB/USB, QRP ≤ 5 W, frequenze in kHz, emergenze con la stella'],
+['Tappa 3','I limiti delle 10 bande','Inizio e fine di ogni banda e statuto primario/secondario'],
+['Tappa 4','Lo schema ricorrente','In ogni banda: CW in basso → digitali → beacon → fonia in alto'],
+['Tappa 5','Le frequenze-chiave','FT8 (…074), emergenze, QRP, beacon'],
+['Tappa 6','Ripasso attivo','Flashcard, casi pratici e ascolto con la radio o un SDR']];
+add('roadmap','/roadmap','Tabella di marcia: 6 tappe per impararlo','Una tappa ogni 2-3 giorni: in due settimane hai tutto il bandplan.',`
+<svg viewBox="0 0 960 250" font-family="Inter,Arial">
+<path d="M30 125 L930 125" fill="none" stroke="#c4cad6" stroke-width="6" stroke-dasharray="10,8"/>
+${RM.map((r,i)=>{const x=95+i*152,top=i%2==0,y=top?8:152;const c=['#e53935','#ff9f1c','#4c9a1a','#1557d6','#a315b5','#0d2b6b'][i];return `<line x1="${x}" y1="${top?92:139}" x2="${x}" y2="${top?111:152}" stroke="${c}" stroke-width="2"/><circle cx="${x}" cy="125" r="14" fill="${c}"/><text x="${x}" y="130" text-anchor="middle" fill="#fff" font-weight="800" font-size="13">${i+1}</text><rect x="${x-70}" y="${y}" width="140" height="84" rx="8" fill="#fff" stroke="${c}" stroke-width="2"/><text x="${x}" y="${y+20}" text-anchor="middle" font-size="12" font-weight="800" fill="${c}">${r[1]}</text>${wrap(r[2],27).map((t,j)=>`<text x="${x}" y="${y+37+j*12}" text-anchor="middle" font-size="9.5" fill="#1d2433">${t}</text>`).join('')}`}).join('')}
+</svg>
+<ol class="c">${RM.map(r=>`<li><b>${r[1]}</b> – ${r[2]}</li>`).join('')}</ol>`);
+function wrap(t,n){const w=t.split(' ');const out=[];let l='';w.forEach(x=>{if((l+' '+x).trim().length>n){out.push(l.trim());l=x}else l+=' '+x});if(l.trim())out.push(l.trim());return out;}
+
+// 5 SKETCHNOTES
+add('sketchnotes','/sketchnotes','Appunti disegnati','Le regole da ricordare, scritte come su un quaderno.',`
+<svg viewBox="0 0 960 470" font-family="Caveat,cursive" style="background:#fffef6;border-radius:10px">
+<defs><pattern id="rig" width="20" height="28" patternUnits="userSpaceOnUse"><line x1="0" y1="27" x2="20" y2="27" stroke="#dde6f5"/></pattern></defs>
+<rect width="960" height="470" fill="url(#rig)"/>
+<text x="480" y="48" text-anchor="middle" font-size="40" font-weight="700" fill="#0d2b6b">Bandplan HF — le cose che contano</text>
+<path d="M300 58 Q480 70 660 58" stroke="#e53935" stroke-width="3" fill="none"/>
+<!-- box 1 -->
+<rect x="30" y="90" width="280" height="150" rx="14" fill="none" stroke="#1557d6" stroke-width="2.5" stroke-dasharray="6,4"/>
+<text x="50" y="125" font-size="28" fill="#1557d6" font-weight="700">Sotto 10 MHz → LSB</text>
+<text x="50" y="160" font-size="28" fill="#4c9a1a" font-weight="700">Sopra 10 MHz → USB</text>
+<text x="50" y="195" font-size="23" fill="#333">eccezione: 60 m sempre USB</text>
+<text x="50" y="225" font-size="23" fill="#333">FT8 / FT4 sempre USB</text>
+<!-- box 2 antenna -->
+<rect x="340" y="90" width="280" height="150" rx="14" fill="none" stroke="#e53935" stroke-width="2.5"/>
+<line x1="390" y1="210" x2="390" y2="120" stroke="#333" stroke-width="3"/><line x1="370" y1="140" x2="410" y2="140" stroke="#333" stroke-width="3"/><line x1="375" y1="160" x2="405" y2="160" stroke="#333" stroke-width="3"/>
+<text x="430" y="135" font-size="27" fill="#e53935" font-weight="700">QRP</text>
+<text x="430" y="168" font-size="25" fill="#333">≤ 5 W in uscita</text>
+<text x="430" y="200" font-size="22" fill="#333">QRP CW e QRP fonia</text>
+<text x="430" y="226" font-size="22" fill="#333">hanno la loro QRG</text>
+<!-- box 3 stars -->
+<rect x="650" y="90" width="280" height="150" rx="14" fill="none" stroke="#ff9f1c" stroke-width="2.5" stroke-dasharray="2,5"/>
+${star(690,125,16)}<text x="715" y="133" font-size="27" fill="#d32f2f" font-weight="700">Emergenza</text>
+<text x="670" y="170" font-size="25" fill="#333">3760 · 7110 · 14300</text>
+<text x="670" y="202" font-size="25" fill="#333">18160 · 21360</text>
+<text x="670" y="230" font-size="21" fill="#666">sempre in fonia, lasciale libere!</text>
+<!-- arrow schema -->
+<text x="40" y="290" font-size="27" fill="#0d2b6b" font-weight="700">Ogni banda, da sinistra a destra:</text>
+${[['CW','#e53935'],['digitali','#1557d6'],['beacon','#ff9f1c'],['fonia','#4c9a1a'],['immagini','#222']].map((t,i)=>`<ellipse cx="${110+i*175}" cy="335" rx="70" ry="26" fill="none" stroke="${t[1]}" stroke-width="3"/><text x="${110+i*175}" y="344" text-anchor="middle" font-size="27" fill="${t[1]}" font-weight="700">${t[0]}</text>${i<4?`<path d="M${182+i*175} 335 l26 0 m-8 -7 l8 7 l-8 7" stroke="#555" stroke-width="2.5" fill="none"/>`:''}`).join('')}
+<text x="40" y="405" font-size="26" fill="#333">FT8 quasi sempre a "…074":  7074 · 14074 · 21074 · 28074</text>
+<text x="40" y="445" font-size="26" fill="#333">WARC (30·17·12 m) + 60 m = <tspan fill="#e53935" font-weight="700">NO CONTEST</tspan>   ·   tutto in kHz!</text>
+</svg>`);
+
+// 6 TREE (bande)
+function treeSVG(){const W=980;let g=`<svg viewBox="0 0 ${W} 300" font-family="Inter,Arial">`;
+ const root=[490,30];const groups=[['Bande tradizionali','#1557d6',['160','80','40','20','15','10']],['Bande WARC','#ff9f1c',['30','17','12']],['Banda 60 m','#a315b5',['60']]];
+ const gx=[230,700,900];
+ g+=`<rect x="${root[0]-90}" y="10" width="180" height="40" rx="10" fill="#0d2b6b"/><text x="${root[0]}" y="36" fill="#fff" text-anchor="middle" font-weight="800">Bandplan HF</text>`;
+ let leafX=20;
+ groups.forEach((gr,i)=>{const x=gx[i];g+=`<path d="M${root[0]} 50 C ${root[0]} 80, ${x} 80, ${x} 105" stroke="#999" fill="none" stroke-width="2"/><rect x="${x-80}" y="105" width="160" height="36" rx="8" fill="${gr[1]}"/><text x="${x}" y="128" fill="#fff" text-anchor="middle" font-weight="700" font-size="14">${gr[0]}</text>`;
+  const n=gr[2].length,span=i==0?380:i==1?220:0;gr[2].forEach((m,j)=>{const lx=n==1?x:x-span/2+j*span/(n-1);const b=B.find(z=>z.m==m+' m');
+   g+=`<path d="M${x} 141 C ${x} 170, ${lx} 170, ${lx} 195" stroke="#bbb" fill="none" stroke-width="1.5"/><rect x="${lx-37}" y="195" width="74" height="86" rx="8" fill="#fff" stroke="${gr[1]}" stroke-width="2"/><text x="${lx}" y="216" text-anchor="middle" font-weight="800" font-size="15">${m} m</text><text x="${lx}" y="234" text-anchor="middle" font-size="10">${String(b.a).replace('.',',')}</text><text x="${lx}" y="247" text-anchor="middle" font-size="10">${String(b.b).replace('.',',')}</text><text x="${lx}" y="268" text-anchor="middle" font-size="10" font-weight="700" fill="${b.st=='primario'?'#2f7a10':'#c62828'}">${b.st}</text>`;});});
+ return g+'</svg>';}
+add('tree','/tree','Albero delle bande','Le 10 bande raggruppate in tre famiglie.',treeSVG()+`<p class="note">WARC = bande assegnate dalla conferenza mondiale del 1979: piccole, senza contest. La 60 m è un caso a parte: pochi kHz, potenza massima 15 W e.i.r.p., solo canali USB raccomandati.</p>`);
+
+// 7 TIMELINE
+function specSVG(){const W=980,L=40,R=950;const lo=Math.log10(1800),hi=Math.log10(30000);const X=f=>L+(Math.log10(f)-lo)/(hi-lo)*(R-L);
+ let g=`<svg viewBox="0 0 ${W} 210" font-family="Inter,Arial"><line x1="${L}" y1="110" x2="${R}" y2="110" stroke="#333" stroke-width="3"/>`;
+ [2,3,4,5,7,10,14,20,30].forEach(m=>{g+=`<line x1="${X(m*1000)}" y1="104" x2="${X(m*1000)}" y2="116" stroke="#333"/><text x="${X(m*1000)}" y="132" font-size="11" text-anchor="middle">${m} MHz</text>`});
+ g+=`<line x1="${X(10000)}" y1="40" x2="${X(10000)}" y2="180" stroke="#1557d6" stroke-dasharray="4,4"/><text x="${X(10000)-6}" y="52" font-size="12" text-anchor="end" fill="#1557d6" font-weight="700">← LSB</text><text x="${X(10000)+6}" y="52" font-size="12" fill="#1557d6" font-weight="700">USB →</text>`;
+ B.forEach((b,i)=>{const x=X((b.a+b.b)/2),c=b.warc?'#ff9f1c':b.m=='60 m'?'#a315b5':'#1557d6';const up=i%2==0;
+  g+=`<circle cx="${x}" cy="110" r="8" fill="${c}"/>`+(up?`<line x1="${x}" y1="102" x2="${x}" y2="80" stroke="${c}"/><text x="${x}" y="74" text-anchor="middle" font-weight="800" font-size="14" fill="${c}">${b.m}</text>`:`<line x1="${x}" y1="118" x2="${x}" y2="150" stroke="${c}"/><text x="${x}" y="166" text-anchor="middle" font-weight="800" font-size="14" fill="${c}">${b.m}</text>`)+(b.star?star(x+(b.m.length*4+16),up?69:161,7):'');});
+ return g+`<text x="${R}" y="205" font-size="10" text-anchor="end" fill="#8a93a5">scala logaritmica · ★ = banda con frequenza di emergenza</text></svg>`;}
+add('timeline','/timeline','Linea delle frequenze: lo spettro HF da sinistra a destra','Come una linea del tempo, ma le "date" sono le frequenze: più si va a destra, più la lunghezza d\'onda si accorcia.',specSVG()+`
+<table><tr><th>Banda</th><th>Da (kHz)</th><th>A (kHz)</th><th>Statuto</th><th>Emergenza ★</th></tr>${B.map(b=>`<tr><td><b>${b.m}</b></td><td>${String(b.a).replace('.',',')}</td><td>${String(b.b).replace('.',',')}</td><td>${b.st}</td><td>${b.star||'–'}</td></tr>`).join('')}</table>`);
+
+// 8 ARCHITETTURA
+const AR=[['Inizio banda','CW','#e53935','CW DX, CW QRS, QRP CW, contest CW'],['Digitali stretti','500 Hz','#6c9bea','PSK31, FT8, RTTY'],['Beacon','200 Hz','#ff9f1c','radiofari per la propagazione (da 20 m in su)'],['Digitali larghi','2700 Hz','#1557d6','FT4, DV, RTTY (80 m)'],['Fonia','SSB 2700 Hz','#4c9a1a','QRP fonia, DX, emergenza ★, contest SSB'],['Immagini','2700 Hz','#222','FAX / SSTV'],['Solo 10 m','6000 Hz','#2e6b12','FM, satelliti, ripetitori']];
+add('architettura','/architettura','Architettura di una banda','I "componenti" che trovi in quasi ogni banda, sempre nello stesso ordine.',`
+<svg viewBox="0 0 980 250" font-family="Inter,Arial">
+${AR.map((a,i)=>{const x=8+i*140;return `<rect x="${x}" y="40" width="124" height="110" rx="10" fill="${a[2]}"/><text x="${x+62}" y="68" fill="#fff" text-anchor="middle" font-weight="800" font-size="13.5">${a[0]}</text><text x="${x+62}" y="90" fill="#fff" text-anchor="middle" font-size="12">${a[1]}</text>${wrap(a[3],20).map((t,j)=>`<text x="${x+62}" y="${112+j*13}" fill="#fff" text-anchor="middle" font-size="10">${t}</text>`).join('')}${i<6?`<path d="M${x+126} 95 l12 0" stroke="#555" stroke-width="2.5" marker-end="url(#ar)"/>`:''}`}).join('')}
+<defs><marker id="ar" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#555"/></marker></defs>
+<text x="490" y="20" text-anchor="middle" font-size="13" fill="#5b6475">frequenza che sale →</text>
+<rect x="8" y="172" width="964" height="30" rx="6" fill="#e53935"/><text x="490" y="192" text-anchor="middle" fill="#fff" font-weight="700" font-size="13">Fondamenta: il CW (rosso) è ammesso su quasi tutta la banda</text>
+<text x="490" y="232" text-anchor="middle" font-size="12" fill="#5b6475">Modulazione: LSB sotto 10 MHz · USB sopra 10 MHz · 60 m, FT8 e FT4 sempre USB</text>
+</svg>
+<p class="note">Eccezioni: 30 m ha solo CW e digitali (niente fonia); 160 m e 60 m sono troppo strette per avere tutti i blocchi.</p>`);
+
+// 9 ALBERO (modi)
+function modeTree(){const M=[['CW','#e53935','200 Hz',['QRP CW','CW QRS','CW DX']],['Fonia','#4c9a1a','2700 / 6000 Hz',['SSB','QRP fonia','FM (10 m)']],['Digitale','#1557d6','500 / 2700 / 6000 Hz',['FT8','FT4','PSK31','RTTY','DV']],['Immagini','#222','2700 Hz',['FAX','SSTV']],['Beacon','#ff9f1c','200 Hz',['radiofari ±1 kHz']],['Satellite','#d77fae','6000 Hz',['29300–29510']]];
+ let g=`<svg viewBox="0 0 960 460" font-family="Inter,Arial"><rect x="10" y="205" width="150" height="46" rx="10" fill="#0d2b6b"/><text x="85" y="234" fill="#fff" text-anchor="middle" font-weight="800">Modi di emissione</text>`;
+ M.forEach((m,i)=>{const y=30+i*72;g+=`<path d="M160 228 C 210 228, 220 ${y+20}, 270 ${y+20}" stroke="#aaa" fill="none" stroke-width="2"/><rect x="270" y="${y}" width="170" height="42" rx="8" fill="${m[1]}"/><text x="355" y="${y+19}" fill="#fff" text-anchor="middle" font-weight="800">${m[0]}</text><text x="355" y="${y+34}" fill="#fff" text-anchor="middle" font-size="10.5">${m[2]}</text>`;
+  m[3].forEach((l,j)=>{const x=480+j*95;g+=(j==0?`<line x1="440" y1="${y+21}" x2="${x}" y2="${y+21}" stroke="#bbb"/>`:"")+`<rect x="${x}" y="${y+6}" width="88" height="30" rx="15" fill="#fff" stroke="${m[1]}" stroke-width="1.8"/><text x="${x+44}" y="${y+25}" text-anchor="middle" font-size="11" font-weight="600">${l}</text>`;});});
+ return g+'</svg>';}
+add('albero','/albero','Albero dei modi di emissione','Dalla radice "modi" ai rami (famiglie) e alle foglie (modi concreti), con la larghezza di banda massima.',modeTree());
+
+// 10 CLASSE COMPLETA
+add('classe','/classe completa → /lezione-completa','Lezione completa: leggere il bandplan HF','Obiettivi, spiegazione, schema di tutte le bande, esercizi, riepilogo.',`
+<h3>Obiettivi</h3><ol class="c"><li>Leggere un segmento colorato e capire quale modo è ammesso.</li><li>Ricordare limiti e statuto delle 10 bande.</li><li>Trovare al volo FT8, QRP, beacon ed emergenza in ogni banda.</li></ol>
+<h3>Spiegazione</h3><ol class="c"><li><b>Che cos'è</b>: un bandplan è un accordo tra radioamatori su come dividere ogni banda tra i diversi modi, per non disturbarsi.<ol><li>La legge (PNRF) dice <i>quali</i> frequenze puoi usare.</li><li>Il bandplan IARU dice <i>come</i> usarle bene.</li></ol></li>
+<li><b>Come si legge una banda</b>: ogni riga colorata è un modo; dove c'è il colore, quel modo è ammesso.<ol><li>La riga rossa (CW) copre quasi tutto.</li><li>La verde (fonia) parte a metà banda e arriva alla fine.</li><li>Le barre azzurre/blu (digitali) stanno tra CW e fonia.</li><li>Il giallo indica dove si preferiscono i contest.</li></ol></li>
+<li><b>Le frequenze sotto la barra</b> sono "punti di ritrovo": lì trovi chi usa quel modo (es. FT8 14074).</li></ol>
+<h3>Schema: tutte le bande</h3>${legendHTML()}${B.map(bandBlock).join('')}
+<p class="note">* FT8 3537 è scritto così nel documento: la frequenza FT8 più usata in 80 m è 3573 kHz (vedi /findings).</p>
+<h3>Esercizi</h3><ol class="c">
+<li>In quale banda non si può fare fonia? <details><summary>Soluzione</summary>30 m (solo CW e digitali).</details></li>
+<li>Con quale banda laterale lavori in fonia su 7090 kHz? <details><summary>Soluzione</summary>LSB (sotto 10 MHz).</details></li>
+<li>Cita due bande dove i contest sono esclusi. <details><summary>Soluzione</summary>Due tra 60, 30, 17, 12 m.</details></li>
+<li>Dove si trovano i beacon in 20 m? <details><summary>Soluzione</summary>14100 kHz ±1 (14099–14101).</details></li>
+<li>Qual è la frequenza di emergenza in 15 m? <details><summary>Soluzione</summary>21360 kHz.</details></li></ol>
+<h3>Riepilogo</h3><p>CW in basso, digitali al centro, fonia in alto; LSB sotto 10 MHz, USB sopra; QRP ≤ 5 W; 5 stelle di emergenza; WARC e 60 m senza contest.</p>`);
+
+// 11 CASI
+add('casi','/cas → /casi','Casi pratici','Tre situazioni reali risolte con il bandplan.',`
+<div class="grid g3">
+<div class="box"><b>Caso 1 – FT8 la sera in 40 m</b><ol class="c"><li>Banda 40 m, primaria: ok.</li><li>Frequenza di ritrovo FT8: <b>7074</b> kHz.</li><li>Modo: <b>USB</b> anche se sotto 10 MHz (FT8 sempre USB).</li><li>Segmento: digitali a 2700 Hz (7050–7060) e oltre, dentro la riga rossa: tutto in regola.</li></ol></div>
+<div class="box"><b>Caso 2 – fonia QRP con 5 W in 20 m</b><ol class="c"><li>5 W = QRP (≤ 5 W).</li><li>Frequenza QRP fonia: <b>14285</b> kHz.</li><li>Modo: <b>USB</b> (sopra 10 MHz).</li><li>Attenzione a non stare su 14300: è la frequenza di emergenza ★.</li></ol></div>
+<div class="box"><b>Caso 3 – contest su 30 m?</b><ol class="c"><li>30 m è banda WARC: <b>NO CONTEST</b>.</li><li>È anche a statuto secondario: puoi usarla senza disturbare chi è primario.</li><li>Niente fonia: solo CW e digitali (10130–10150).</li><li>Conclusione: il contest va fatto su 80, 40, 20, 15 o 10 m.</li></ol></div>
+</div>`);
+
+// 12 CONCETTI
+const CON=[['Banda','Intervallo di frequenze assegnato ai radioamatori, chiamato con la lunghezza d\'onda (es. 40 m = 7000–7200 kHz).'],['Segmento','Parte di una banda riservata o raccomandata per un certo modo (CW, fonia, digitale…).'],['Larghezza di banda massima','Quanto può essere "largo" il segnale in quel segmento: 200 Hz per il CW, 2700 Hz per la SSB, 6000 Hz per FM e satelliti.'],['Statuto primario / secondario','Primario: i radioamatori hanno pieno diritto. Secondario: si può trasmettere ma senza disturbare i servizi primari e accettando i loro disturbi.'],['QRP','Trasmissione a bassa potenza: fino a 5 W in uscita.'],['Contest preferred / No contest','Giallo: zone preferite per le gare. Bianco o "no contest": lì le gare sono escluse (60 m e WARC).'],['LSB / USB','Banda laterale inferiore o superiore della SSB: LSB sotto 10 MHz, USB sopra; 60 m, FT8 e FT4 sempre USB.'],['QRG di emergenza','Frequenza da lasciare libera per il traffico in emergenza (stella ★).']];
+add('concetti','/cocetti → /concetti','Concetti fondamentali','Otto idee: capite queste, il disegno del bandplan diventa leggibile.',`<div class="grid g2">${CON.map(c=>`<div class="box"><b>${c[0]}</b><br>${c[1]}</div>`).join('')}</div>`);
+
+// 13 EASY
+add('easy','/easyexplain → /spiegazione-facile','Spiegazione facile','Senza gergo, con un paragone.',`
+<p style="font-size:17px">Immagina ogni banda come un'<b>autostrada</b> con più corsie.</p>
+<ol class="c"><li>La corsia <b style="color:#e53935">rossa</b> è per il Morse (CW): è la più lunga e quasi sempre libera per tutti.</li>
+<li>La corsia <b style="color:#1557d6">blu</b> è per i computer che parlano tra loro (FT8, RTTY…): occupa un pezzetto vicino all'inizio.</li>
+<li>La corsia <b style="color:#4c9a1a">verde</b> è per chi parla a voce: comincia a metà e va fino in fondo.</li>
+<li>I cartelli <b>gialli</b> dicono dove si fanno le gare.</li>
+<li>La <b>stella</b> è la corsia di emergenza: va lasciata libera, come quella dell'autostrada.</li></ol>
+<p><b>Esempio</b>: vuoi parlare a voce in 40 m? Prendi la corsia verde, per esempio a 7090 kHz se usi poca potenza.</p>`);
+
+// 14 ESEMPI
+add('esempi','/esempi','Esempi pratici','Situazioni concrete e frequenza giusta.',`
+<table><tr><th>Voglio…</th><th>Banda</th><th>Frequenza (kHz)</th><th>Modo / nota</th></tr>
+<tr><td>Fare FT8 di giorno</td><td>20 m</td><td>14074</td><td>USB</td></tr>
+<tr><td>Fare FT8 sui 10 m</td><td>10 m</td><td>28074</td><td>USB</td></tr>
+<tr><td>Ricevere immagini SSTV</td><td>20 m</td><td>14230 ±5</td><td>USB, segmento nero 14225–14235</td></tr>
+<tr><td>Ascoltare i radiofari</td><td>10 m</td><td>28190–28300</td><td>segmento arancio beacon</td></tr>
+<tr><td>Collegarmi a un ripetitore in 10 m</td><td>10 m</td><td>trasmetto 29510–29590, ricevo 29610–29690</td><td>FM, passo 10 kHz</td></tr>
+<tr><td>Fare CW lento per imparare</td><td>80 m</td><td>3555</td><td>CW QRS</td></tr>
+<tr><td>Fonia in 60 m</td><td>60 m</td><td>5354 · 5357 · 5360 · 5363</td><td>USB, max 15 W e.i.r.p.</td></tr>
+<tr><td>Cercare stazioni DX in fonia</td><td>20 m</td><td>14195 ±5</td><td>centro attività DX</td></tr></table>`);
+
+// 15 SPIEGAZIONE
+add('spiegazione','/spiegazioni → /spiegazione','Spiegazione didattica','Definizione, funzionamento, esempio, riepilogo.',`
+<ol class="c"><li><b>Definizione</b>: il bandplan HF è la mappa che divide ogni banda radioamatoriale tra i modi di emissione e indica le frequenze di riferimento.</li>
+<li><b>Come funziona</b><ol><li>Ogni banda è un rettangolo orizzontale: a sinistra la frequenza più bassa, a destra la più alta.</li><li>Ogni colore è un modo, con la sua larghezza di banda massima.</li><li>I numeri in alto sono i confini dei segmenti; quelli in basso le frequenze di ritrovo.</li><li>Sotto il nome della banda trovi lo statuto e le note (WARC, no contest, potenza).</li></ol></li>
+<li><b>Esempio</b>: in 15 m, il CW va da 21000; i digitali stretti da 21070 a 21110; il beacon a 21150 ±1; la fonia da 21151 a 21450, con l'emergenza a 21360 e la QRP fonia a 21385.</li>
+<li><b>Riepilogo</b>: leggi la banda da sinistra a destra, riconosci i colori, cerca la stella e le frequenze FT8/QRP.</li></ol>`);
+
+// 16 SCHEDA STUDIO
+add('scheda','/studi sheet → /scheda-studio','Scheda di studio con citazioni','Le regole del documento, con le sue parole, e cosa significano.',`
+<table><tr><th>Dal documento</th><th>Cosa vuol dire</th></tr>
+<tr><td>«Sono considerati QRP i collegamenti effettuati ad una potenza inferiore o uguale a 5W output»</td><td>QRP = massimo 5 W misurati all'uscita del trasmettitore.</td></tr>
+<tr><td>«in SSB si usa la LSB fino a 10.000 kHz e la USB oltre tale limite»</td><td>LSB su 160, 80 e 40 m; USB su 20, 17, 15, 12, 10 m.</td></tr>
+<tr><td>«fatta esclusione per la banda dei 60 metri in cui si usa comunque la USB»</td><td>Unica eccezione per la fonia: 60 m in USB.</td></tr>
+<tr><td>«In FT8 e FT4 si usa sempre la USB»</td><td>Anche su 7074 o 1840 si imposta USB.</td></tr>
+<tr><td>«tutte le frequenze sono espresse in kHz»</td><td>14300 = 14,300 MHz; le cifre corte (060, 070…) sono le ultime cifre in kHz.</td></tr>
+<tr><td>«Le misure dei diagrammi non sono proporzionali alle frequenze indicate»</td><td>Il disegno non è in scala: conta l'ordine dei segmenti, non la lunghezza.</td></tr>
+<tr><td>60 m: «Max 15W e.i.r.p.» e canali USB 5354, 5357, 5360, 5363</td><td>Potenza irradiata massima 15 W; si consigliano 4 canali.</td></tr>
+<tr><td>160 m: «NO PACKET RADIO!»</td><td>In 160 m il packet radio non va usato.</td></tr></table>`);
+
+// 17 FLASHCARD
+const FC=[['Limiti della banda 40 m?','7000–7200 kHz, primaria'],['Limiti della banda 20 m?','14000–14350 kHz, primaria'],['Limiti della banda 80 m?','3500–3800 kHz, secondaria'],['Limiti della banda 160 m?','1830–1850 kHz, primaria'],['Limiti della banda 60 m?','5351,5–5366,5 kHz, secondaria'],['Limiti della banda 30 m?','10100–10150 kHz, secondaria'],['Limiti della banda 17 m?','18068–18168 kHz (PNRF)'],['Limiti della banda 15 m?','21000–21450 kHz'],['Limiti della banda 12 m?','24890–24990 kHz'],['Limiti della banda 10 m?','28000–29700 kHz'],
+['Che cosa significa QRP?','Potenza in uscita ≤ 5 W'],['LSB o USB sotto 10 MHz?','LSB (tranne 60 m, FT8, FT4)'],['FT8 e FT4: quale banda laterale?','Sempre USB'],['Emergenza in 80 m?','3760 kHz'],['Emergenza in 40 m?','7110 kHz LSB (la Rete Zamberletti usa 6990 kHz LSB)'],['Emergenza in 20 m?','14300 kHz'],['Emergenza in 17 m?','18160 kHz'],['Emergenza in 15 m?','21360 kHz'],['FT8 in 20 m?','14074 kHz'],['FT8 in 40 m?','7074 kHz (FT4/FT8)'],
+['FT8 in 10 m?','28074 kHz'],['Beacon in 20 m?','14100 ±1 kHz'],['Bande senza contest?','60, 30, 17, 12 m'],['Bande WARC?','30, 17, 12 m'],['Banda senza fonia?','30 m'],['Colore del CW e larghezza?','Rosso, 200 Hz'],['Colore delle immagini (SSTV)?','Nero, 2700 Hz'],['Potenza massima in 60 m?','15 W e.i.r.p.'],['QRP fonia in 40 m?','7090 kHz'],['Ripetitori 10 m: ingresso e uscita?','IN 29510–29590, OUT 29610–29690, FM step 10']];
+add('flashcard','/studi card → /flashcard','Flashcard','Clicca una carta per girarla. 30 carte.',`
+<div class="noprint"><button class="btn" onclick="shuffle()">Mescola</button><button class="btn" onclick="document.querySelectorAll('.card').forEach(c=>c.classList.remove('f'))">Gira tutte sul fronte</button></div>
+<div class="cards" id="cards"></div>`);
+
+// 18 GLOSSARIO
+const GL=[['Beacon','Radiofaro: stazione automatica che trasmette di continuo per verificare la propagazione.'],['Contest','Gara tra radioamatori per fare più collegamenti possibili.'],['CW','Onda continua: trasmissione in codice Morse.'],['CW QRS','CW a velocità lenta.'],['DV','Voce digitale (es. FreeDV).'],['DX','Collegamento a grande distanza.'],['e.i.r.p.','Potenza equivalente irradiata isotropicamente: la potenza "che esce dall\'antenna".'],['FAX / SSTV','Trasmissione di immagini fisse.'],['FM','Modulazione di frequenza; nelle HF usata in 10 m.'],['FT4 / FT8','Modi digitali per segnali deboli, sempre in USB.'],['IARU','Unione internazionale dei radioamatori; la Regione 1 comprende Europa e Africa.'],['kHz','Migliaia di hertz; 1000 kHz = 1 MHz.'],['LSB / USB','Banda laterale inferiore / superiore della SSB.'],['PNRF','Piano Nazionale di Ripartizione delle Frequenze.'],['PSK31','Modo digitale da tastiera, molto stretto.'],['QRG','Frequenza (codice Q).'],['QRP','Bassa potenza, ≤ 5 W.'],['RTTY','Radiotelescrivente.'],['SSB','Banda laterale unica: la fonia in HF.'],['Statuto primario / secondario','Livello di diritto del servizio radioamatoriale in quella banda.'],['WARC','Bande 30, 17, 12 m, assegnate nel 1979; senza contest.'],['WRC-15','Conferenza mondiale del 2015 che ha introdotto i 60 m.']];
+add('glossario','/glossario','Glossario','Termini del documento in ordine alfabetico.',`<table><tr><th>Termine</th><th>Significato</th></tr>${GL.map(g=>`<tr><td><b>${g[0]}</b></td><td>${g[1]}</td></tr>`).join('')}</table>`);
+
+// 19 FINDINGS
+add('findings','/findings → /risultati','Risultati: schemi nascosti e cose da verificare','Regolarità che rendono il bandplan più facile da memorizzare, più i punti dubbi.',`
+<ol class="c"><li><b>L'ordine è sempre lo stesso</b>: CW → digitali → beacon → fonia → immagini. Impari uno schema, non 10 bande.</li>
+<li><b>FT8 "finisce in 074"</b> sulle bande principali: 7074, 14074, 21074, 28074. Eccezioni: 1840, 10136, 18100, 24915.</li>
+<li><b>Beacon a cifra tonda ±1</b>: 14100, 18110, 21150, 24930; in 10 m un intero segmento 28190–28300.</li>
+<li><b>Emergenze sempre nella fonia, verso la fine della banda</b>: 3760, 7110, 14300, 18160, 21360. Nessuna in 160, 60, 30, 12 e 10 m.</li>
+<li><b>Statuto secondario solo su 80, 60 e 30 m</b>: tutte le altre bande sono primarie.</li>
+<li><b>Contest esclusi dove la banda è piccola</b>: 60 m e le WARC.</li>
+<li><b>Il CW è ovunque</b>: la riga rossa copre quasi tutte le bande, interrotta solo dai beacon e, in 10 m, da satelliti e ripetitori.</li>
+<li><b>Dubbi da verificare</b> (possibili refusi nel documento):<ol>
+<li>FT8 in 80 m scritto «3537»: la frequenza FT8 più diffusa è 3573 kHz.</li>
+<li>17 m inizia a «18069» nel documento ARI: la tabella PNRF delle slide (87) conferma <b>18068 kHz</b>. Risolto.</li><li>Emergenza 40 m: <b>risolto</b>. Il docente conferma <b>7110 kHz LSB</b> (centro di attività IARU, da non occupare stabilmente: ci si annuncia e poi ci si sposta). La Rete Zamberletti usa <b>6990 kHz LSB</b> come riserva propria, fuori dalla banda radioamatoriale. Il 7170 del documento ARI non vale per l'emergenza.</li>
+<li>60 m: il documento indica i limiti IARU (5351,5–5366,5); il PNRF 2018 assegna la porzione più ampia 5275–5450 kHz.</li></ol></li></ol>`);
+
+// 20 ISHIKAWA
+function fish(){const W=980;let g=`<svg viewBox="0 0 ${W} 400" font-family="Inter,Arial"><line x1="40" y1="200" x2="740" y2="200" stroke="#0d2b6b" stroke-width="5"/><path d="M740 130 L975 200 L740 270 Z" fill="#e53935"/><text x="830" y="193" fill="#fff" text-anchor="middle" font-weight="800" font-size="13">Fatico a</text><text x="830" y="210" fill="#fff" text-anchor="middle" font-weight="800" font-size="13">memorizzare</text><text x="830" y="226" fill="#fff" text-anchor="middle" font-weight="800" font-size="13">il bandplan</text>`;
+ const C=[['Materiale',['troppi numeri in 1 pagina','disegno non in scala','cifre abbreviate (060, 070)'],0],['Metodo',['numeri imparati isolati','nessun ripasso a intervalli','manca uno schema comune'],1],['Mezzi',['nessun ascolto reale','niente flashcard','nessun SDR o radio'],2],['Regole',['eccezioni (60 m, WARC)','LSB/USB da ricordare','primario/secondario'],3],['Persona',['sovraccarico di dati','poco tempo per volta','manca un aggancio pratico'],4],['Ambiente',['regole cambiate nel tempo','più fonti (PNRF, IARU)','documenti diversi tra sezioni'],5]];
+ C.forEach((c,i)=>{const top=i%2==0;const x=210+Math.floor(i/2)*205;const y0=top?40:360;
+  g+=`<line x1="${x}" y1="${y0}" x2="${x+90}" y2="200" stroke="#5b6475" stroke-width="3"/><rect x="${x-60}" y="${top?10:362}" width="120" height="28" rx="6" fill="#1557d6"/><text x="${x}" y="${top?29:381}" fill="#fff" text-anchor="middle" font-weight="800" font-size="13">${c[0]}</text>`;
+  c[1].forEach((t,j)=>{const t2=(j+1)/4;const px=x+90*t2,py=y0+(200-y0)*t2;g+=`<line x1="${px}" y1="${py}" x2="${px-22}" y2="${py}" stroke="#aaa"/><text x="${px-25}" y="${py+4}" text-anchor="end" font-size="10.5">${t}</text>`;});});
+ return g+'</svg>';}
+add('ishikawa','/ishikawa','Lisca di pesce: perché è difficile e come rimediare','Il problema è la testa del pesce; le cause sono le spine, raggruppate in 6 famiglie.',fish()+`
+<table><tr><th>Causa</th><th>Rimedio</th></tr>
+<tr><td>Materiale: troppi numeri</td><td>Studia una banda al giorno con la sezione /classe completa.</td></tr>
+<tr><td>Metodo: numeri isolati</td><td>Impara prima lo schema comune (/architettura), poi solo le eccezioni (/findings).</td></tr>
+<tr><td>Mezzi: niente pratica</td><td>Ascolta 14074, 14230 e 7074 con la radio o un SDR web e confronta con il disegno.</td></tr>
+<tr><td>Regole: eccezioni</td><td>Ricordale con una frase: «60 e WARC senza gare, 30 senza voce».</td></tr>
+<tr><td>Persona: sovraccarico</td><td>10 minuti di flashcard al giorno, ripetute dopo 1, 3 e 7 giorni.</td></tr>
+<tr><td>Ambiente: più fonti</td><td>Per l'esame fa fede il PNRF in vigore: segna i punti dubbi e chiedili al corso.</td></tr></table>`);
+
+// 21 LEZIONE: CHI TRASMETTE, COSA E DOVE
+const MODI=[['CW','#e53935','Telegrafia in codice Morse: punti e linee.','Sì: è il modo più antico, ammesso su quasi tutta la banda.'],
+['Fonia','#4c9a1a','Trasmissione della VOCE: parli al microfono (SSB o, in 10 m, FM).','Sì, nei segmenti verdi.'],
+['Digitale','#1557d6','Dati trasmessi da un computer collegato alla radio: testo, segnali deboli, voce digitalizzata.','Sì, nei segmenti azzurri/blu/viola.'],
+['Immagini','#222','Immagini fisse (foto, disegni) trasformate in suoni: FAX e SSTV.','Sì, nei segmenti neri.'],
+['Beacon','#ff9f1c','Radiofari: stazioni automatiche che trasmettono sempre il loro nominativo per mostrare la propagazione.','NO: si ascoltano soltanto. Lì non si trasmette.'],
+['Satellite','#eaa5c8','Collegamenti attraverso i satelliti dei radioamatori (in HF solo 29300–29510 kHz, 10 m).','Solo per lavorare via satellite: niente collegamenti normali lì.']];
+const SIG=[['CW','Continuous Wave (onda continua)','Morse trasmesso accendendo e spegnendo la portante','QRP CW 7030','—'],
+['SSB','Single Side Band (banda laterale unica)','Il modo normale della fonia in HF','tutto il verde','LSB / USB'],
+['LSB / USB','Lower / Upper Side Band','Banda laterale inferiore / superiore','LSB sotto 10 MHz, USB sopra','—'],
+['FM','Frequency Modulation','Fonia a modulazione di frequenza, solo in 10 m','ripetitori 29610–29690','—'],
+['FT8','Franke-Taylor, 8 toni','Digitale per segnali debolissimi; turni di 15 s, programma WSJT-X','7074 · 14074 · 21074','USB'],
+['FT4','Franke-Taylor, 4 toni','Come FT8 ma più veloce (turni di 7,5 s), adatto ai contest','7074 · 14080 · 21140','USB'],
+['PSK31','Phase Shift Keying, 31 baud','Digitale "da tastiera": si scrive in diretta, segnale strettissimo','14070 · 21070','USB'],
+['RTTY','RadioTeleTYpe (radiotelescrivente)','Digitale storico per scrivere testo; molto usato nei contest','14090 · 7040','—'],
+['DV','Digital Voice (voce digitale)','La voce viene digitalizzata dal computer e trasmessa come dati','7070 · 21180 · 28330','—'],
+['FAX','Facsimile','Immagini fisse trasmesse riga per riga, in bianco e nero','14230 ±5','—'],
+['SSTV','Slow Scan TeleVision (TV a scansione lenta)','Foto a colori trasmesse in 1–2 minuti','14230 ±5 · 21340','USB'],
+['QRP','Codice Q: "bassa potenza"','Trasmettere con 5 W o meno; QRP CW e QRP fonia sono frequenze di ritrovo','QRP fonia 7090','—'],
+['QRS','Codice Q: "trasmetti più lentamente"','CW QRS = Morse lento, per chi impara','3555 · 21055','—'],
+['QRG','Codice Q: "frequenza"','QRG di emergenza = frequenza da lasciare libera','★ 14300','—'],
+['DX','Distanza','Collegamenti lontani (altri continenti)','CW DX 3500–3510','—'],
+['Beacon','Radiofaro','Trasmettitore automatico da ascoltare per capire la propagazione','14100 ±1','—'],
+['Packet radio','Trasmissione dati a pacchetti','Vietato in 160 m («NO PACKET RADIO!»)','—','—'],
+['e.i.r.p.','Equivalent Isotropically Radiated Power','Potenza effettivamente irradiata dall\'antenna; in 60 m max 15 W','60 m','—'],
+['WARC','World Administrative Radio Conference (1979)','Le bande 30, 17, 12 m nate da quella conferenza: niente contest','30 · 17 · 12 m','—'],
+['IN / OUT ripetitori','Ingresso / uscita','Trasmetti sull\'IN, ascolti sull\'OUT (100 kHz più in alto)','IN 29510–29590, OUT 29610–29690','FM']];
+function cell(b,types,none){const r=b.s.filter(s=>types.includes(s[0])).map(s=>[s[1],s[2]]).sort((x,y)=>x[0]-y[0]);const m=[];r.forEach(x=>{if(m.length&&x[0]<=m[m.length-1][1])m[m.length-1][1]=Math.max(m[m.length-1][1],x[1]);else m.push(x.slice());});return m.length?m.map(x=>`${String(x[0]).replace('.',',')}–${String(x[1]).replace('.',',')}`).join('<br>'):(none||'<span style="color:#c62828">no</span>');}
+const SPEC=`<table style="font-size:12.5px"><tr><th>Banda</th><th>Il radioamatore trasmette da… a… (kHz)</th><th>Statuto</th><th style="background:#fde3e3">CW</th><th style="background:#e3f3da">Fonia</th><th style="background:#dfe9fb">Digitale</th><th style="background:#e8e8e8">Immagini</th><th style="background:#ffeccc">Beacon (solo ascolto)</th><th>Altro</th></tr>`+
+B.map(b=>`<tr><td><b>${b.m}</b></td><td><b>${String(b.a).replace('.',',')} – ${String(b.b).replace('.',',')}</b></td><td>${b.st}${b.nc?'<br><i>no contest</i>':''}</td><td>${cell(b,['cw'])}</td><td>${cell(b,['f27','f60'])}</td><td>${cell(b,['d5','d27','d60'])}</td><td>${cell(b,['img'])}</td><td>${cell(b,['bcn'],'—')}</td><td>${[b.star?'★ emergenza '+b.star:'',b.m=='10 m'?'satellite 29300–29510; ripetitori FM IN 29510–29590 / OUT 29610–29690':'',b.m=='60 m'?'max 15 W e.i.r.p.; canali USB 5354·5357·5360·5363':'',b.m=='160 m'?'no packet radio':''].filter(Boolean).join('<br>')||'—'}</td></tr>`).join('')+`</table>`;
+add('chi','/classe completa → /lezione-completa','Lezione completa: chi trasmette, che cosa e dove','Le sigle spiegate, i tipi di trasmissione e lo specchietto banda per banda.',`
+<h3>Obiettivi</h3><ol class="c"><li>Capire che <b>tutto il bandplan riguarda solo i radioamatori</b>: i colori non sono "utenti diversi" ma <b>modi diversi</b> di trasmettere.</li><li>Sapere cosa significano le sigle (FT8, FT4, PSK31, RTTY, DV, FAX/SSTV, QRP…).</li><li>Leggere lo specchietto: dove posso trasmettere in CW, in fonia, in digitale, e dove no.</li></ol>
+<h3>1. La risposta breve</h3>
+<div class="warn"><b>Chi trasmette?</b> Sempre e solo il <b>radioamatore</b> con patente e nominativo. Il bandplan è un accordo tra radioamatori per dividersi le loro bande: rosso, verde, blu, nero non sono persone o servizi diversi, ma <b>modi di emissione</b> diversi dello stesso radioamatore. Fuori dai limiti della banda il radioamatore non può trasmettere.</div>
+<svg viewBox="0 0 960 250" font-family="Inter,Arial" style="margin-top:12px">
+<rect x="380" y="10" width="200" height="54" rx="12" fill="#0d2b6b"/><text x="480" y="34" text-anchor="middle" fill="#fff" font-weight="800" font-size="16">RADIOAMATORE</text><text x="480" y="53" text-anchor="middle" fill="#fff" font-size="11">patente + nominativo</text>
+${MODI.map((m,i)=>{const x=20+i*157;return `<path d="M480 64 C 480 100, ${x+68} 100, ${x+68} 125" stroke="#999" fill="none" stroke-width="1.8"/><rect x="${x}" y="125" width="136" height="44" rx="9" fill="${m[1]}"/><text x="${x+68}" y="153" text-anchor="middle" fill="${m[0]=='Satellite'?'#222':'#fff'}" font-weight="800" font-size="15">${m[0]}</text><text x="${x+68}" y="${195}" text-anchor="middle" font-size="22" fill="${i==4?'#c62828':'#2f7a10'}" font-weight="800">${i==4?'✘':'✔'}</text><text x="${x+68}" y="${218}" text-anchor="middle" font-size="10.5" fill="#333">${['trasmette','trasmette','trasmette','trasmette','solo ascolto','solo via satellite'][i]}</text>`}).join('')}
+</svg>
+<h3>2. I tipi di trasmissione (le righe colorate)</h3>
+<table><tr><th>Modo</th><th>Che cos'è</th><th>Il radioamatore può trasmettere lì?</th></tr>${MODI.map(m=>`<tr><td><span class="tag" style="background:${m[1]};color:${m[0]=='Satellite'?'#222':'#fff'}">${m[0]}</span></td><td>${m[2]}</td><td>${m[3]}</td></tr>`).join('')}</table>
+<ol class="c"><li><b>Fonia vuol dire "voce"</b>: è il radioamatore che parla al microfono. Non è un servizio diverso.<ol><li>In HF si usa la SSB: LSB sotto 10 MHz, USB sopra (60 m sempre USB).</li><li>In 10 m c'è anche la FM, con i ripetitori.</li></ol></li>
+<li><b>Digitale vuol dire "dati dal computer"</b>: è sempre il radioamatore, che trasmette con la radio collegata al PC (FT8, FT4, PSK31, RTTY, DV).</li>
+<li><b>Immagini</b>: sempre il radioamatore, che invia foto o disegni (SSTV, FAX).</li>
+<li><b>Beacon</b>: sono trasmettitori automatici che lavorano 24 ore su 24. Tu li <b>ascolti</b>: se senti il beacon di un paese lontano, la banda è "aperta" verso quel paese. Non si trasmette sulla loro frequenza (±1 kHz).</li>
+<li><b>Satellite</b>: il segmento 29300–29510 kHz serve ai collegamenti tramite i satelliti radioamatoriali; i normali QSO vanno fatti altrove.</li>
+<li><b>Statuto primario o secondario</b>: in 80, 60 e 30 m la banda è condivisa con altri servizi che hanno la precedenza. Il radioamatore trasmette, ma <b>non deve disturbarli</b> e deve accettare i loro disturbi.</li></ol>
+<h3>3. Le sigle spiegate</h3>
+<table style="font-size:13px"><tr><th>Sigla</th><th>Nome per esteso</th><th>Che cos'è</th><th>Dove la trovi (kHz)</th><th>Banda laterale</th></tr>${SIG.map(s=>`<tr><td><b>${s[0]}</b></td><td>${s[1]}</td><td>${s[2]}</td><td>${s[3]}</td><td>${s[4]}</td></tr>`).join('')}</table>
+<p class="note">Le frequenze accanto alle sigle sono "punti di ritrovo": chi usa quel modo si trova lì intorno. Il modo resta ammesso in tutto il segmento del suo colore.</p>
+<h3>4. Lo specchietto: dove trasmette il radioamatore, banda per banda</h3>
+<p>Ogni casella indica i kHz in cui quel modo è ammesso. "no" = in quella banda quel modo non è previsto. I beacon si <b>ascoltano</b> soltanto.</p>
+${SPEC}
+<p class="note">Fonte: Bandplan HF A.R.I. Milano rev. 2021 (non in scala). I segmenti si sovrappongono: per esempio in 40 m, tra 7050 e 7200, puoi trovare CW e fonia insieme. Il PNRF in vigore resta il riferimento legale.</p>
+<h3>5. Esercizi</h3><ol class="c">
+<li>In un segmento verde chi trasmette? <details><summary>Soluzione</summary>Il radioamatore, in fonia (a voce).</details></li>
+<li>Posso fare una chiamata CQ su 14100 kHz? <details><summary>Soluzione</summary>No: 14100 ±1 è riservata ai beacon, si ascolta soltanto.</details></li>
+<li>Cosa vuol dire PSK31? <details><summary>Soluzione</summary>Phase Shift Keying a 31 baud: modo digitale da tastiera, molto stretto.</details></li>
+<li>In 30 m posso parlare a voce? <details><summary>Soluzione</summary>No: in 30 m ci sono solo CW e digitale.</details></li>
+<li>Che differenza c'è tra FT8 e FT4? <details><summary>Soluzione</summary>Stessi autori e programma; FT4 usa turni di 7,5 s invece di 15 s, quindi è più veloce.</details></li>
+<li>Con 5 W in 40 m in fonia, quale frequenza di ritrovo uso e con quale banda laterale? <details><summary>Soluzione</summary>QRP fonia 7090 kHz, LSB.</details></li></ol>
+<h3>6. Riepilogo</h3><p>Nel bandplan trasmette sempre e solo il radioamatore: i colori indicano il <b>modo</b> (CW, fonia = voce, digitale = computer, immagini). I beacon si ascoltano, il segmento satellite è solo per i satelliti, le stelle sono da lasciare libere per le emergenze.</p>`);
+
+// 22 DEFINIZIONI E REGOLAMENTAZIONE (slide 70-90)
+const ONDE=[[1,'ELF','Extremely Low Frequencies','3–30 Hz','100.000–10.000 km','—','studi geofisici, onde di Schumann'],[2,'SLF','Super Low Frequencies','30–300 Hz','10.000–1.000 km','—','monitoraggio ambientale spaziale'],[3,'ULF','Ultra Low Frequencies','300–3000 Hz','1.000–100 km','—','monitoraggio ambientale spaziale'],
+[4,'VLF','Very Low Frequencies','3–30 kHz','100–10 km','miriametriche','trasmissioni con sommergibili'],[5,'LF','Low Frequencies','30–300 kHz','10–1 km','chilometriche','trasmissioni della marina'],[6,'MF','Medium Frequencies','300–3000 kHz','1–0,1 km','ettometriche','radio AM, sistemi aeroportuali'],[7,'HF','High Frequencies','3–30 MHz','100–10 m','decametriche','radio OC, CB, radiocomandi, allarmi'],[8,'VHF','Very High Frequencies','30–300 MHz','10–1 m','metriche','radio FM, radioamatori, televisione'],[9,'UHF','Ultra High Frequencies','300–3000 MHz','100–10 cm','decimetriche','televisione, cellulari, ponti radio, GPS'],[10,'SHF','Super High Frequencies','3–30 GHz','10–1 cm','centimetriche','radar, ponti radio, satelliti'],[11,'EHF','Extremely High Frequencies','30–300 GHz','10–1 mm','millimetriche','radar, satelliti, sonde spaziali'],[12,'—','microonde (slide)','300–3000 GHz','1–0,1 mm','decimillimetriche','radar, satelliti, sonde spaziali']];
+const PREF=[['miria-','10 000','miriametriche','VLF'],['chilo-','1000','chilometriche','LF'],['etto-','100','ettometriche','MF'],['deca-','10','decametriche','HF'],['(nessuno)','1','metriche','VHF'],['deci-','0,1','decimetriche','UHF'],['centi-','0,01','centimetriche','SHF'],['milli-','0,001','millimetriche','EHF'],['decimilli-','0,0001','decimillimetriche','banda 12']];
+function ondeSVG(){const W=980;let g=`<svg viewBox="0 0 ${W} 250" font-family="Inter,Arial"><text x="490" y="18" text-anchor="middle" font-size="13" fill="#5b6475">frequenza che sale →   lunghezza d'onda che si accorcia →</text>`;
+ const cols=['#5d4037','#6d4c41','#8d6e63','#e53935','#ff9f1c','#4c9a1a','#1557d6','#6a1b9a','#37474f'];
+ ONDE.slice(3).forEach((o,i)=>{const x=10+i*107;const ham=[7,8,9].includes(o[0]);
+  g+=`<rect x="${x}" y="30" width="100" height="150" rx="10" fill="${cols[i]}" ${ham?'stroke="#ffd400" stroke-width="5"':''}/><text x="${x+50}" y="54" text-anchor="middle" fill="#fff" font-size="12">banda ${o[0]}</text><text x="${x+50}" y="80" text-anchor="middle" fill="#fff" font-size="20" font-weight="800">${o[1]=='—'?'12':o[1]}</text><text x="${x+50}" y="103" text-anchor="middle" fill="#fff" font-size="11">${o[3]}</text><text x="${x+50}" y="122" text-anchor="middle" fill="#fff" font-size="11">λ ${o[4]}</text>${wrap(o[5],12).map((t,j)=>`<text x="${x+50}" y="${146+j*14}" text-anchor="middle" fill="#fff" font-size="${t.length>14?9.5:11.5}" font-weight="700">${t}</text>`).join('')}`;});
+ g+=`<rect x="${10+3*107}" y="192" width="${3*107-7}" height="30" rx="6" fill="#ffd400"/><text x="${10+4.5*107-4}" y="212" text-anchor="middle" font-size="13" font-weight="800">bande dei radioamatori: HF, VHF, UHF</text>`;
+ return g+`<text x="490" y="244" text-anchor="middle" font-size="11" fill="#5b6475">Bande 1–3 (ELF, SLF, ULF) sotto i 3 kHz: frequenze acustiche, non usate per le radiocomunicazioni</text></svg>`;}
+const PNRF=[['130–148,5 kHz','FISSO, MOBILE MARITTIMO','non è un servizio attribuito (compare solo tra le utilizzazioni)','MISE, Ministero difesa','fisso e mobile marittimo primari'],
+['1830–1850 kHz (160 m)','RADIOAMATORE','primario','MISE','—'],['7000–7200 kHz (40 m)','RADIOAMATORE, RADIOAMATORE VIA SATELLITE','primario','MISE','—'],['10100–10150 kHz (30 m)','FISSO; Radioamatore','radioamatore secondario (minuscolo)','MISE, Ministero difesa','il servizio fisso ha la precedenza'],
+['14000–14350 kHz (20 m)','RADIOAMATORE, RADIOAMATORE VIA SATELLITE','primario','MISE','—'],['18068–18168 kHz (17 m)','RADIOAMATORE, RADIOAMATORE VIA SATELLITE','primario','MISE','—'],['21000–21450 kHz (15 m)','RADIOAMATORE, RADIOAMATORE VIA SATELLITE','primario','MISE','—'],['24890–24990 kHz (12 m)','RADIOAMATORE, RADIOAMATORE SAT','primario','MISE','—'],
+['50–52 MHz (6 m)','MOBILE TERRESTRE; Radioamatore','radioamatore secondario','Ministero difesa','wind profilers'],['144–146 MHz (2 m)','RADIOAMATORE, RADIOAMATORE SAT','primario','MISE','—'],
+['430–434 MHz','FISSO, MOBILE; Radioamatore; Radiolocalizzazione','radioamatore secondario','Ministero difesa, MISE','432–434: anche ISM e esplorazione della Terra'],['434–435 MHz','FISSO, MOBILE, Radiolocalizzazione, Esplorazione della Terra','radioamatore assente','Ministero difesa','—'],['435–436 MHz','RADIOAMATORE, RADIOAMATORE VIA SATELLITE','primario','MISE','zona dei satelliti radioamatoriali'],['436–438 MHz','FISSO; Radioamatore','radioamatore secondario','MISE','—']];
+const FC2=[['Onde ettometriche: quale banda?','MF, 300–3000 kHz, λ da 1 km a 100 m (banda 6)'],['Onde decametriche: quale banda?','HF, 3–30 MHz, λ da 100 a 10 m (banda 7)'],['Onde metriche: quale banda?','VHF, 30–300 MHz, λ da 10 a 1 m (banda 8)'],['Onde decimetriche: quale banda?','UHF, 300–3000 MHz, λ da 100 a 10 cm (banda 9)'],['Onde miriametriche: quale banda?','VLF, 3–30 kHz, λ da 100 a 10 km (banda 4)'],['Onde chilometriche: quale banda?','LF, 30–300 kHz, λ da 10 a 1 km (banda 5)'],['Onde centimetriche e millimetriche?','SHF 3–30 GHz (banda 10) ed EHF 30–300 GHz (banda 11)'],['Dove e quando fu fatta la classificazione delle bande?','Atlantic City, 1947'],
+['Definizione di servizio di radioamatore (ITU RR 1.56)?','Autoistruzione, intercomunicazione e studi tecnici, da persone autorizzate, per fini personali e senza scopo di lucro'],['Che cos\'è una stazione (ITU RR 1.61)?','Trasmettitori e/o ricevitori con accessori, in un\'unica sede, per un servizio di radiocomunicazione'],['Art. 19: cosa vale per tutte le trasmissioni?','Devono essere identificabili; vietata l\'identificazione falsa o fuorviante'],['Nominativi: cifre 0 e 1?','Il divieto non vale per le stazioni di radioamatore'],['Art. 25.2A: si possono cifrare i messaggi?','No, tranne i segnali di comando dei satelliti radioamatoriali'],['Art. 25.3: traffico per conto di terzi?','Solo in emergenza e per soccorsi in caso di catastrofe'],['Art. 25.9: ogni quanto il nominativo?','A brevi intervalli durante le emissioni'],['Servizio primario o secondario nella tabella PNRF?','Primario in MAIUSCOLO, secondario in minuscolo'],
+['Statuto secondario: posso chiedere protezione?','No, verso i primari; sì verso altri secondari assegnati dopo'],['Differenza attribuzione / allocazione / assegnazione?','Attribuzione: banda a un servizio; allocazione: canale in un piano; assegnazione: autorizzazione a una stazione'],['Cosa sono gli SRD?','Short Range Devices: apparati a corto raggio e bassa potenza, senza protezione'],['Che cosa vuol dire ISM?','Usi industriali, scientifici e medicali dell\'energia radio, non per telecomunicazioni']];
+const GL2=[['Allocazione (allotment)','Iscrizione di un canale in un piano di allocazione nazionale o internazionale, per uno o più Paesi o aree.'],['Assegnazione (assignment)','Autorizzazione data dall\'organo competente a una stazione per usare una frequenza o un canale.'],['Attribuzione (allocation)','Iscrizione di una banda nel PNRF per uno o più servizi di radiocomunicazione.'],['Disturbo pregiudizievole (harmful interference)','Disturbo che compromette un servizio di sicurezza o che degrada, interrompe o impedisce un servizio di radiocomunicazione regolare.'],['ISM','Usi industriali, scientifici e medicali dell\'energia a radiofrequenza, esclusa la telecomunicazione.'],['MIMIT (ex MISE)','Ministero delle Imprese e del Made in Italy: gestisce le bande dei radioamatori.'],['NMR','Risonanza magnetica nucleare.'],['Servizio fisso / mobile','Fisso: tra punti fissi; mobile: tra stazioni mobili e terrestri o tra mobili.'],['SRD','Short Range Devices: apparati a corto raggio e bassa potenza, senza diritto a protezione.'],['Stazione (ITU RR 1.61)','Trasmettitori e/o ricevitori con accessori, in un\'unica sede, per un servizio.'],['UTC','Tempo coordinato universale, basato sul secondo SI (ITU-R TF.460-6).'],['Wind profilers','Radar Doppler che misurano velocità e direzione del vento fino alla troposfera (8–17 km).']];
+add('definizioni','/classe completa → /lezione-completa','Lezione completa: definizioni e regolamentazione (slide 70–90)','Aggiunta dalle slide del corso ARI: classificazione delle onde, Regolamento ITU (articoli 1, 19, 25), statuto dei servizi, glossario e tabella PNRF.',`
+<h3>Obiettivi</h3><ol class="c"><li>Sapere a memoria la classificazione delle onde: numero di banda, sigla, frequenza, lunghezza d'onda e nome (miriametriche… decimillimetriche).</li><li>Conoscere le definizioni dell'Articolo 1 e le regole degli Articoli 19 e 25 del Regolamento delle Radiocomunicazioni ITU.</li><li>Distinguere statuto esclusivo, primario e secondario e i termini attribuzione, allocazione, assegnazione.</li><li>Leggere la tabella di attribuzione del PNRF.</li></ol>
+
+<h3>1. Classificazione delle onde elettromagnetiche e delle bande di frequenza</h3>
+<p>La classificazione fu stabilita all'assemblea internazionale di <b>Atlantic City nel 1947</b>; le sigle seguono lo standard IEEE adottato dall'ITU. Lo spettro radio "utile" è diviso in <b>nove bande, numerate da 4 a 12</b>.</p>
+${ondeSVG()}
+<table style="font-size:13px"><tr><th>N. banda</th><th>Sigla</th><th>Nome inglese</th><th>Frequenza</th><th>Lunghezza d'onda λ</th><th>Onde…</th><th>Usi</th></tr>${ONDE.map(o=>`<tr${[7,8,9].includes(o[0])?' style="background:#fff8d6"':''}><td>${o[0]}</td><td><b>${o[1]}</b></td><td>${o[2]}</td><td>${o[3]}</td><td>${o[4]}</td><td><b>${o[5]}</b></td><td>${o[6]}</td></tr>`).join('')}</table>
+<ol class="c"><li><b>Regola del numero di banda</b> (ITU-R V.431): la banda N va da 0,3 × 10<sup>N</sup> a 3 × 10<sup>N</sup> Hz.<ol><li>Esempio banda 7: da 0,3 × 10<sup>7</sup> = 3 MHz a 3 × 10<sup>7</sup> = 30 MHz (HF).</li><li>Le bande 1, 2 e 3 (ELF, SLF, ULF, sotto 3 kHz) coincidono con le frequenze acustiche e servirebbero antenne lunghe migliaia di km: per questo lo spettro "allocabile" parte dalla banda 4, VLF.</li></ol></li>
+<li><b>Il trucco per ricordare il nome</b>: il prefisso dice la lunghezza d'onda più corta della banda (il suo lato a frequenza più alta). Esempio: ettometriche = λ fino a 100 m (etto = 100).
+<table style="font-size:13px;margin-top:6px"><tr><th>Prefisso</th><th>Metri</th><th>Onde</th><th>Banda</th></tr>${PREF.map(p=>`<tr><td>${p[0]}</td><td>${p[1]}</td><td><b>${p[2]}</b></td><td>${p[3]}</td></tr>`).join('')}</table></li>
+<li><b>Formula</b>: λ = c / f, con c = 300 000 km/s. Esempio: 7 MHz → λ = 300 / 7 ≈ 43 m, cioè banda dei 40 m, onde decametriche.</li>
+<li>Le bande dei radioamatori viste in questa pagina sono tutte <b>HF, onde decametriche</b>; i 50 e 144 MHz sono VHF (metriche), i 430–438 MHz UHF (decimetriche).</li></ol>
+<p class="note">Correzione alla slide 81: per la SLF (30–300 Hz) la lunghezza d'onda è 10 000–1000 km e la ULF è 300–3000 Hz, con λ 1000–100 km.</p>
+
+<h3>2. Regolamento delle Radiocomunicazioni ITU – Articolo 1: termini e definizioni</h3>
+<table><tr><th>Punto</th><th>Termine</th><th>Definizione</th></tr>
+<tr><td>1.1</td><td>Introduzione</td><td>I termini hanno il significato indicato ai fini del Regolamento; non valgono necessariamente per altri scopi.</td></tr>
+<tr><td>1.56</td><td><b>Servizio di radioamatore</b> (amateur service)</td><td>Servizio di radiocomunicazione a scopo di autoistruzione, intercomunicazione e studi tecnici, svolto da persone debitamente autorizzate, interessate alla tecnica radio solo per fini personali e senza interesse economico.</td></tr>
+<tr><td>1.57</td><td><b>Servizio di radioamatore via satellite</b> (amateur-satellite service)</td><td>Servizio che usa stazioni spaziali su satelliti della Terra per gli stessi scopi del servizio di radioamatore.</td></tr>
+<tr><td>1.61</td><td><b>Stazione</b> (station)</td><td>Uno o più trasmettitori o ricevitori (o entrambi), con gli accessori, in un'unica sede, per un servizio di radiocomunicazione o di radioastronomia. Ogni stazione è classificata in base al servizio in cui opera.</td></tr></table>
+
+<h3>3. Articolo 19: identificazione delle stazioni</h3>
+<ol class="c"><li><b>Sezione I – Disposizioni generali</b><ol><li>19.1 Tutte le trasmissioni devono essere identificabili, con segnali di identificazione o in altro modo.</li><li>19.2 Sono vietate le trasmissioni con identificazione falsa o fuorviante.</li><li>19.3 Dove possibile, i segnali di identificazione vanno trasmessi automaticamente secondo le Raccomandazioni ITU.</li><li>19.4–19.5 Devono avere segnali di identificazione le trasmissioni di alcuni servizi, tra cui il <b>servizio di radioamatore</b> (salvo i punti 19.13–19.15).</li></ol></li>
+<li><b>Sezione III – Formazione dei nominativi (international call sign)</b><ol><li>19.45 Si usano le 26 lettere dell'alfabeto e, nei casi previsti, le cifre; <b>escluse le lettere accentate</b>.</li><li>19.46–19.47 Vietate le combinazioni confondibili con segnali di soccorso o simili.</li><li>19.48 Vietate le combinazioni riservate alle abbreviazioni (Raccomandazione ITU-R M.1172, WRC-15).</li><li>19.50 I nominativi internazionali si formano come ai punti 19.51–19.71 (aerei, navi, stazioni terrestri).</li><li>I <b>primi due caratteri</b> sono due lettere, oppure lettera + cifra, oppure cifra + lettera: identificano la <b>nazionalità</b> (es. I = Italia).</li><li>Il divieto di usare le cifre <b>0 e 1</b> non si applica alle stazioni di radioamatore.</li></ol></li></ol>
+
+<h3>4. Articolo 25: servizio di radioamatore e via satellite</h3>
+<div class="grid g3">
+<div class="box"><b>Scopo non commerciale</b><br>autoformazione, intercomunicazione, sperimentazione tecnica</div>
+<div class="box"><b>No broadcasting</b><br>nessuna trasmissione di radiodiffusione al pubblico</div>
+<div class="box"><b>Identificazione</b><br>nominativo all'inizio, alla fine e a intervalli regolari</div>
+<div class="box"><b>Collegamenti internazionali</b><br>ammessi, salvo divieto notificato all'ITU da un Paese</div>
+<div class="box"><b>Traffico di terzi</b><br>regolato dalle singole amministrazioni</div>
+<div class="box"><b>Potenza e frequenze</b><br>solo nelle bande assegnate, con la minima potenza necessaria</div></div>
+<table style="margin-top:10px"><tr><th>Comma</th><th>Cosa dice</th></tr>
+<tr><td>25.1</td><td>Vietati i collegamenti con un Paese la cui amministrazione ha notificato opposizione.</td></tr>
+<tr><td>25.2</td><td>Tra Paesi diversi: solo comunicazioni sull'oggetto del servizio (1.56) e osservazioni puramente personali.</td></tr>
+<tr><td>25.2A</td><td>Vietato cifrare i messaggi per nasconderne il senso, tranne i segnali di comando tra stazioni di terra e satelliti radioamatoriali.</td></tr>
+<tr><td>25.3</td><td>Messaggi internazionali per conto di terzi solo in emergenza e per soccorsi in caso di catastrofe (l'amministrazione decide se applicarlo).</td></tr>
+<tr><td>25.4</td><td>Soppresso.</td></tr>
+<tr><td>25.5</td><td>Le amministrazioni decidono se chiedere la prova di ricezione e trasmissione in codice Morse.</td></tr>
+<tr><td>25.6</td><td>Le amministrazioni verificano le capacità operative e tecniche del richiedente.</td></tr>
+<tr><td>25.7</td><td>La potenza massima è fissata dalle amministrazioni.</td></tr>
+<tr><td>25.8</td><td>Valgono per i radioamatori tutte le norme pertinenti di Costituzione, Convenzione e Regolamento ITU.</td></tr>
+<tr><td>25.9</td><td>Durante le emissioni il nominativo va trasmesso a brevi intervalli.</td></tr>
+<tr><td>25.9A</td><td>Le amministrazioni sono invitate a preparare i radioamatori alle comunicazioni di soccorso in caso di catastrofe.</td></tr>
+<tr><td>25.9B</td><td>Un'amministrazione può autorizzare un radioamatore straniero che si trova temporaneamente sul suo territorio.</td></tr>
+<tr><td>25.10</td><td>(Sezione II, via satellite) Le regole della Sezione I valgono anche per il servizio via satellite.</td></tr>
+<tr><td>25.11</td><td>Prima del lancio di un satellite radioamatoriale servono abbastanza stazioni di comando a terra per eliminare subito le interferenze.</td></tr></table>
+<p class="note">Fonte indicata dalle slide: ITU Radio Regulations, edizione 2024, Art. 25 (detto anche S25), pagina 323.</p>
+
+<h3>5. Statuto dei servizi</h3>
+<ol class="c"><li><b>Disturbo pregiudizievole</b> (harmful interference): disturbo che compromette un servizio di radionavigazione o di sicurezza, oppure che degrada seriamente, interrompe ripetutamente o impedisce un servizio di radiocomunicazione regolare.</li>
+<li><b>Come si riconoscono nella tabella PNRF</b>: servizi <b>primari in MAIUSCOLO</b> (es. RADIOAMATORE), servizi <b>secondari in minuscolo</b> (es. Radioamatore).</li>
+<li><b>Le stazioni di un servizio secondario</b>:<ol><li>non devono causare disturbi pregiudizievoli alle stazioni di un servizio primario;</li><li>non possono chiedere protezione dai disturbi causati da stazioni di un servizio primario;</li><li>hanno diritto a protezione dai disturbi di stazioni dello stesso o di altri servizi secondari a cui le frequenze siano assegnate in seguito.</li></ol></li></ol>
+<table><tr><th>Statuto</th><th>Chi usa la banda</th><th>Protezione MIMIT</th></tr>
+<tr><td><b>Esclusivo</b></td><td>Solo i radioamatori</td><td>Sì</td></tr>
+<tr><td><b>Primario</b></td><td>Più categorie, ma i radioamatori sono gli utilizzatori principali, con diritto di precedenza</td><td>Sì</td></tr>
+<tr><td><b>Secondario</b></td><td>Più categorie; i radioamatori cedono il passo quando un primario rivendica la banda</td><td>No</td></tr></table>
+<div class="warn">Nota pratica: una banda secondaria non è inutilizzabile. Bisogna controllare che non ci siano servizi primari e accettare le interferenze senza diritto di protezione.</div>
+
+<h3>6. Glossario PNRF: termini e definizioni</h3>
+<table><tr><th>Termine</th><th>Definizione</th></tr>
+<tr><td><b>Attribuzione</b> (di una banda) – allocation</td><td>Iscrizione nel PNRF di una banda di frequenze per uno o più servizi di radiocomunicazione (di terra o spaziali) o per la radioastronomia.</td></tr>
+<tr><td><b>Allocazione</b> (di un canale) – allotment</td><td>Iscrizione di un canale radio in un piano di allocazione, nazionale o internazionale, per uno o più Paesi o aree.</td></tr>
+<tr><td><b>Assegnazione</b> (di una frequenza o canale) – assignment</td><td>Autorizzazione dell'organo competente a usare, in una stazione, una frequenza o un canale secondo condizioni precise.</td></tr>
+<tr><td><b>Servizio di radiocomunicazione</b></td><td>Servizio che comprende trasmissione, emissione o ricezione di onde radio per fini di telecomunicazione.</td></tr>
+<tr><td><b>Servizio fisso</b></td><td>Radiocomunicazione tra punti fissi determinati.</td></tr>
+<tr><td><b>Servizio mobile</b></td><td>Radiocomunicazione tra stazioni mobili e stazioni terrestri, o tra stazioni mobili.</td></tr>
+<tr><td><b>Servizio d'esplorazione della Terra via satellite</b></td><td>Tra stazioni terrene e spaziali: raccoglie con sensori attivi o passivi informazioni sulla Terra e sui suoi fenomeni, anche da piattaforme aeree o a terra, e le distribuisce.</td></tr>
+<tr><td><b>Servizio di radioamatore</b></td><td>Istruzione individuale, intercomunicazione e studi tecnici, da persone autorizzate, a titolo personale e senza interesse economico.</td></tr>
+<tr><td><b>Servizio di radioamatore via satellite</b></td><td>Usa stazioni spaziali su satelliti della Terra per gli stessi scopi del servizio di radioamatore.</td></tr>
+<tr><td><b>UTC</b> (Coordinated Universal Time)</td><td>Scala dei tempi basata sul secondo del Sistema Internazionale (Raccomandazione ITU-R TF.460-6).</td></tr>
+<tr><td><b>ISM</b> (industrial, scientific and medical)</td><td>Apparecchiature che producono e usano energia radio in uno spazio ridotto per fini industriali, scientifici, medici o domestici, escluse le telecomunicazioni.</td></tr>
+<tr><td><b>SRD</b> (Short Range Devices)</td><td>Apparati a corto raggio e bassa potenza, che usano lo spettro in modo collettivo, senza diritto a protezione e senza interferire.</td></tr>
+<tr><td><b>NMR</b></td><td>Risonanza magnetica nucleare.</td></tr>
+<tr><td><b>Wind profilers</b></td><td>Radar Doppler (VHF/UHF) che misurano velocità e direzione del vento dal suolo alla troposfera (8–17 km), per meteo e voli.</td></tr></table>
+<p class="note">Altre sigle nelle tabelle: 2006/771/CE = decisione europea sugli SRD; ERC/REC 70-03 = raccomandazione CEPT sugli SRD; ITU-R RS.1260 = sensori attivi da satellite; Res. 217 RR = wind profilers; MISE = l'attuale MIMIT; i numeri come 1, 7A, 32 rimandano alle note del PNRF.</p>
+
+<h3>7. Tabella di attribuzione del PNRF (slide 87–90)</h3>
+<table style="font-size:13px"><tr><th>Banda</th><th>Servizi</th><th>Statuto radioamatore</th><th>Gestore</th><th>Note</th></tr>${PNRF.map(r=>`<tr><td><b>${r[0]}</b></td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td></tr>`).join('')}</table>
+<p class="note">Nelle utilizzazioni compaiono anche SRD, NMR, ISM, ULP-WMCE e active sensors (satellite). La slide 88 riporta due volte la riga 24890–24990.</p>
+
+<h3>8. Bandplan IARU Regione 1: dettagli in più (slide 70)</h3>
+<table style="font-size:13px"><tr><th>Banda</th><th>Segmento (kHz)</th><th>Larghezza max</th><th>Uso</th></tr>
+<tr><td>60 m</td><td>5351,5–5354,0</td><td>200 Hz</td><td>CW e modi a banda stretta</td></tr><tr><td>60 m</td><td>5354,0–5366,0</td><td>2700 Hz</td><td>tutti i modi; USB raccomandata per la fonia</td></tr><tr><td>60 m</td><td>5366,0–5366,5</td><td>20 Hz</td><td>modi per segnali debolissimi</td></tr>
+<tr><td>40 m</td><td>7000–7040</td><td>200 Hz</td><td>CW; 7030 = centro attività QRP CW</td></tr><tr><td>40 m</td><td>7040–7050</td><td>500 Hz</td><td>digimodi; 7047–7050 stazioni automatiche (unattended)</td></tr><tr><td>40 m</td><td>7050–7060</td><td>2700 Hz</td><td>tutti i modi, digimodi; 7050–7053 stazioni automatiche</td></tr><tr><td>40 m</td><td>7060–7100</td><td>2700 Hz</td><td>contest SSB preferito; 7070 voce digitale; 7090 SSB QRP</td></tr><tr><td>40 m</td><td>7100–7130</td><td>2700 Hz</td><td>tutti i modi; <b>7110 = centro emergenze Regione 1</b></td></tr><tr><td>40 m</td><td>7130–7200</td><td>2700 Hz</td><td>contest SSB preferito; 7165 immagini; 7175–7200 priorità ai collegamenti intercontinentali</td></tr>
+<tr><td>30 m</td><td>10100–10130</td><td>200 Hz</td><td>CW; 10116 QRP CW</td></tr><tr><td>30 m</td><td>10130–10150</td><td>500 Hz</td><td>digimodi a banda stretta</td></tr>
+<tr><td>20 m</td><td>14000–14060</td><td>200 Hz</td><td>CW, contest CW preferito; 14055 = centro QRS</td></tr><tr><td>20 m</td><td>14060–14070</td><td>200 Hz</td><td>CW; 14060 QRP CW</td></tr><tr><td>20 m</td><td>14070–14099</td><td>500 Hz</td><td>digimodi; 14089–14099 stazioni automatiche</td></tr><tr><td>20 m</td><td>14099–14101</td><td>—</td><td><b>solo beacon</b> (International Beacon Project)</td></tr><tr><td>20 m</td><td>14101–14125</td><td>2700 Hz</td><td>tutti i modi; 14101–14112 digimodi automatici</td></tr><tr><td>20 m</td><td>14125–14300</td><td>2700 Hz</td><td>contest SSB preferito; 14130 voce digitale; 14195 ±5 priorità DX-pedition; 14230 immagini; 14285 SSB QRP</td></tr><tr><td>20 m</td><td>14300–14350</td><td>2700 Hz</td><td>tutti i modi; <b>14300 = centro emergenze mondiale</b></td></tr></table>
+<div class="warn"><b>Chiarito dal docente</b>: l'emergenza in fonia sui 40 m è su <b>7110 kHz LSB</b>; la Rete Zamberletti usa <b>6990 kHz LSB</b> come riserva propria. Per i 17 m la tabella PNRF (slide 87) conferma l'inizio a <b>18068 kHz</b>: il 18069 del documento ARI è un refuso. Per i 60 m il PNRF 2018 assegna una porzione più ampia, 5275–5450 kHz.</div>
+
+<h3>9. Esercizi</h3><ol class="c">
+<li>Le onde ettometriche a quale banda corrispondono? <details><summary>Soluzione</summary>MF, banda 6: 300–3000 kHz, λ da 1 km a 100 m.</details></li>
+<li>La banda dei 40 m è fatta di onde…? <details><summary>Soluzione</summary>Decametriche (HF, banda 7).</details></li>
+<li>Calcola i limiti della banda 8. <details><summary>Soluzione</summary>Da 0,3 × 10⁸ = 30 MHz a 3 × 10⁸ = 300 MHz (VHF, onde metriche).</details></li>
+<li>Come riconosci un servizio secondario nella tabella PNRF? <details><summary>Soluzione</summary>È scritto in minuscolo.</details></li>
+<li>In 30 m il radioamatore ha statuto…? E chi ha la precedenza? <details><summary>Soluzione</summary>Secondario; ha la precedenza il servizio FISSO.</details></li>
+<li>Puoi trasmettere un messaggio di un amico non radioamatore a un collega straniero? <details><summary>Soluzione</summary>No, salvo emergenza o soccorso in caso di catastrofe (Art. 25.3).</details></li>
+<li>Puoi usare un codice segreto in un QSO internazionale? <details><summary>Soluzione</summary>No (Art. 25.2A), tranne i comandi verso i satelliti radioamatoriali.</details></li>
+<li>Differenza tra attribuzione e assegnazione? <details><summary>Soluzione</summary>Attribuzione: una banda data a un servizio nel PNRF; assegnazione: autorizzazione a una stazione per una frequenza.</details></li></ol>
+
+<h3>10. Riepilogo</h3><p>Bande numerate da 4 a 12; i radioamatori in HF usano onde <b>decametriche</b>. Il Regolamento ITU definisce il servizio di radioamatore (1.56), quello via satellite (1.57) e la stazione (1.61); l'Art. 19 impone l'identificazione e regola i nominativi; l'Art. 25 fissa le regole operative. Nel PNRF il MAIUSCOLO indica il servizio primario, il minuscolo il secondario, che non ha protezione.</p>`);
+
+FC.push(...FC2); GL.push(...GL2); GL.sort((a,b)=>a[0].localeCompare(b[0],"it"));
+{const g=S.find(x=>x.id==='glossario');g.html=`<table><tr><th>Termine</th><th>Significato</th></tr>${GL.map(x=>`<tr><td><b>${x[0]}</b></td><td>${x[1]}</td></tr>`).join('')}</table>`;
+ const f=S.find(x=>x.id==='flashcard');f.sub=`Clicca una carta per girarla. ${FC.length} carte (le ultime ${FC2.length} vengono dalle slide 70–90).`;}
+// ---------- RENDER ----------
+document.getElementById('nav').innerHTML=S.map((s,i)=>`<a href="#${s.id}">${i+1}. ${s.code.split(' ')[0]}</a>`).join('');
+document.getElementById('main').innerHTML=`<section><h2>Come usare questa pagina</h2><p>Hai chiesto 20 codici sul Bandplan HF. Ogni sezione spiega lo stesso documento in un modo diverso: scegli quello che ti fa "scattare" la memoria. Ordine consigliato per studiare: <b>/easyexplain → /architettura → /classe completa → /findings → /studi card</b>.</p>${legendHTML()}</section>`+
+S.map((s,i)=>`<section id="${s.id}"><h2><span class="code">${s.code}</span> ${i+1}. ${s.title}</h2><p class="sub">${s.sub}</p>${s.html}</section>`).join('');
+function renderCards(list){document.getElementById('cards').innerHTML=list.map(c=>`<div class="card" onclick="this.classList.toggle('f')"><div class="in"><div class="fa">${c[0]}</div><div class="ba">${c[1]}</div></div></div>`).join('');}
+function shuffle(){const a=FC.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}renderCards(a);}
+renderCards(FC);
+</script>
+</body>
+</html>
