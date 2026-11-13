@@ -75,7 +75,7 @@ footer{text-align:center;color:var(--mute);font-size:13px;padding:20px}
 </style>
 </head>
 <body>
-<div style="background:#0d2b6b;padding:8px 16px;font-family:Inter,Arial,sans-serif;font-size:14px"><a href="index.html" style="color:#fff;margin-right:16px;font-weight:700;text-decoration:none">Bandplan HF – 20 codici</a><a href="audio.html" style="color:#ffd27a;margin-right:16px;font-weight:700;text-decoration:none">Ascolta la dispensa v7</a><a href="download.html" style="color:#bfe3ff;font-weight:700;text-decoration:none">Scarica PDF e DOCX</a></div>
+<div style="background:#0d2b6b;padding:8px 16px;font-family:Inter,Arial,sans-serif;font-size:14px"><a href="index.html" style="color:#fff;margin-right:16px;font-weight:700;text-decoration:none">Bandplan HF – 20 codici</a><a href="dispensa.html" style="color:#ffd27a;margin-right:16px;font-weight:700;text-decoration:none">Leggi e ascolta la dispensa v7</a><a href="download.html" style="color:#bfe3ff;font-weight:700;text-decoration:none">Scarica PDF e DOCX</a></div>
 <header><div class="wrap">
 <h1>Bandplan HF – capirlo e memorizzarlo</h1>
 <p>Studio del Bandplan HF A.R.I. Sezione di Milano (rev. 2021) con 20 codici di spiegazione visiva e di studio — v4: definizioni delle slide 70–90 ed emergenza 40 m su 7110 kHz LSB</p>
@@ -575,6 +575,25 @@ S.map((s,i)=>`<section id="${s.id}"><h2><span class="code">${s.code}</span> ${i+
 function renderCards(list){document.getElementById('cards').innerHTML=list.map(c=>`<div class="card" onclick="this.classList.toggle('f')"><div class="in"><div class="fa">${c[0]}</div><div class="ba">${c[1]}</div></div></div>`).join('');}
 function shuffle(){const a=FC.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}renderCards(a);}
 renderCards(FC);
+</script>
+<style>#bar{position:fixed;left:0;right:0;bottom:0;background:#0d2b6b;color:#fff;padding:8px 12px;z-index:30;box-shadow:0 -2px 8px rgba(0,0,0,.25);font-family:Inter,Arial,sans-serif}
+#bar .row{max-width:1040px;margin:0 auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap}#bar select{flex:1;min-width:180px;padding:5px;border-radius:6px;border:0}
+#bar button{background:#1557d6;color:#fff;border:0;border-radius:6px;padding:6px 10px;font-weight:700;cursor:pointer}#bar audio{width:100%;max-width:1040px;display:block;margin:6px auto 0}#bar label{font-size:12px}
+.play{display:inline-block;margin-left:10px;vertical-align:middle;background:#f59e0b;color:#fff;border:0;border-radius:18px;padding:3px 11px;font-size:13px;font-weight:700;cursor:pointer}
+section.now{outline:3px solid #f59e0b}body{padding-bottom:120px}@media print{#bar,.play{display:none!important}}</style>
+<div id="bar"><div class="row"><button id="prev">⏮</button><select id="sel"></select><button id="next">⏭</button><button id="go">📖 Vai alla sezione</button><label><input type="checkbox" id="follow" checked> segui il testo</label></div><audio id="player" controls preload="none"></audio></div>
+<script>
+const AF=["Bandplan_HF_v4_00_Introduzione.mp3", "Bandplan_HF_v4_01_infographic.mp3", "Bandplan_HF_v4_02_canvas.mp3", "Bandplan_HF_v4_03_layers.mp3", "Bandplan_HF_v4_04_roadmap.mp3", "Bandplan_HF_v4_05_sketchnotes.mp3", "Bandplan_HF_v4_06_tree.mp3", "Bandplan_HF_v4_07_timeline.mp3", "Bandplan_HF_v4_08_architettura.mp3", "Bandplan_HF_v4_09_albero.mp3", "Bandplan_HF_v4_10_classe.mp3", "Bandplan_HF_v4_11_casi.mp3", "Bandplan_HF_v4_12_concetti.mp3", "Bandplan_HF_v4_13_easy.mp3", "Bandplan_HF_v4_14_esempi.mp3", "Bandplan_HF_v4_15_spiegazione.mp3", "Bandplan_HF_v4_16_scheda.mp3", "Bandplan_HF_v4_17_flashcard.mp3", "Bandplan_HF_v4_18_glossario.mp3", "Bandplan_HF_v4_19_findings.mp3", "Bandplan_HF_v4_20_ishikawa.mp3", "Bandplan_HF_v4_21_chi.mp3", "Bandplan_HF_v4_22_definizioni.mp3"];
+(function(){const p=document.getElementById('player'),sel=document.getElementById('sel');
+const S=[...document.querySelectorAll('main section')];let cur=0;
+S.forEach((sec,i)=>{if(!AF[i])return;const h=sec.querySelector('h2');const o=document.createElement('option');o.value=i;const m=h.textContent.match(/(\d+)\.\s+(.*)/);o.textContent=(m?m[1]+'. '+m[2]:h.textContent).replace('▶ Ascolta','').slice(0,75);sel.appendChild(o);
+ const b=document.createElement('button');b.className='play';b.textContent='▶ Ascolta';b.onclick=()=>load(i,true);h.appendChild(b);});
+function mark(){S.forEach(x=>x.classList.remove('now'));if(S[cur])S[cur].classList.add('now');}
+function load(i,play){if(i<0||i>=AF.length)return;cur=i;sel.value=i;p.src='audio_bandplan/'+AF[i];mark();
+ if(document.getElementById('follow').checked)S[i].scrollIntoView({behavior:'smooth',block:'start'});if(play)p.play().catch(()=>{});}
+sel.onchange=()=>load(+sel.value,true);document.getElementById('prev').onclick=()=>load(cur-1,true);document.getElementById('next').onclick=()=>load(cur+1,true);
+document.getElementById('go').onclick=()=>S[cur].scrollIntoView({behavior:'smooth',block:'start'});p.addEventListener('ended',()=>load(cur+1,true));
+p.src='audio_bandplan/'+AF[0];})();
 </script>
 </body>
 </html>
